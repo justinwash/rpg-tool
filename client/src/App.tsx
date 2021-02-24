@@ -1,30 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { Spinner } from './components/ui/Spinner';
 
-function App() {
-  import('wasm').then(m => {
-    console.log(m);
-  })
-  
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+export const App = () => {
+  const [wasm, setWasm] = useState<any>(null);
+
+  useEffect(() => {
+    import('wasm').then((m) => setWasm(m));
+  }, []);
+
+  return wasm ? (
+    <div className='App'>
+      add_two_ints(2, 2) = {wasm.add_two_ints(2, 2)}
+      <br />
+      fib(27) = {wasm.fib(27)}
     </div>
+  ) : (
+    <Spinner />
   );
-}
+};
 
 export default App;
