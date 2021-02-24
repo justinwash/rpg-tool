@@ -12,3 +12,18 @@ path = "src/lib.rs"
 
 [dependencies]
 wasm-bindgen = "0.2.70"
+dragula = "0.1.0"
+web-sys = "0.3.47"
+js-sys = "0.3.47"
+
+[dev-dependencies.web-sys]
+version = "0.3.47"
+features = [
+  'Document',
+  'DomTokenList',
+  'Element',
+  'HtmlElement',
+  'HtmlCollection',
+  'Window',
+  'console'
+]
