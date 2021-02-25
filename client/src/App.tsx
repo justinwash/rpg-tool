@@ -16,10 +16,10 @@ export const App = () => {
         add_two_ints(2, 2) = {wasm.add_two_ints(2, 2)}
         <br />
         fib(27) = {wasm.fib(27)}
-        <div id='drag-container'>
+        <div id='replace'>
           <img src='./logo192.png' alt='logo' />
-          {wasm.main()}
         </div>
+        {wasm.replace_element()}
       </div>
     );
   } else return <Spinner />;
