@@ -1,0 +1,63 @@
+mouse event listeners for canvas:
+
+let context = Rc::new(context);
+let pressed = Rc::new(Cell::new(false));
+{
+    let context = context.clone();
+    let pressed = pressed.clone();
+    let closure = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+      context.begin_path();
+      context.move_to(event.offset_x() as f64, event.offset_y() as f64);
+      pressed.set(true);
+    }) as Box<dyn FnMut(_)>);
+    canvas.add_event_listener_with_callback("mousedown", closure.as_ref().unchecked_ref())?;
+    closure.forget();
+  }
+  {
+    let context = context.clone();
+    let pressed = pressed.clone();
+    let closure = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+      if pressed.get() {
+        context.line_to(event.offset_x() as f64, event.offset_y() as f64);
+        context.stroke();
+        context.begin_path();
+        context.move_to(event.offset_x() as f64, event.offset_y() as f64);
+      }
+    }) as Box<dyn FnMut(_)>);
+    canvas.add_event_listener_with_callback("mousemove", closure.as_ref().unchecked_ref())?;
+    closure.forget();
+  }
+  {
+    let context = context.clone();
+    let pressed = pressed.clone();
+    let closure = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+      pressed.set(false);
+      context.line_to(event.offset_x() as f64, event.offset_y() as f64);
+      context.stroke();
+    }) as Box<dyn FnMut(_)>);
+    canvas.add_event_listener_with_callback("mouseup", closure.as_ref().unchecked_ref())?;
+    closure.forget();
+  }
+
+
+  
+  why does this work
+
+  let image2 = image.clone();
+  let context2 = context.clone();
+  let draw_image = Closure::wrap(Box::new(move || {
+    for x in 0..10 {
+      for y in 0..10 {
+        context2
+          .draw_image_with_html_image_element(
+            &image2,
+            (image2.width() * x).into(),
+            (image2.height() * y).into(),
+          )
+          .expect("drawing image failed");
+      }
+    }
+  }) as Box<dyn Fn()>);
+  image.set_onload(Some(draw_image.as_ref().unchecked_ref()));
+  draw_image.forget();
+  image.set_src("disco.jpeg");

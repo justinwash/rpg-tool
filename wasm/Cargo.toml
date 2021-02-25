@@ -22,6 +22,7 @@ features = [
   'DomTokenList',
   'Element',
   'HtmlElement',
+  'HtmlImageElement',
   'HtmlCollection',
   'HtmlCanvasElement',
   'Window',
