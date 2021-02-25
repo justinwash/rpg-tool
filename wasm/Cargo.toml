@@ -30,4 +30,5 @@ features = [
   'CanvasRenderingContext2d',
   'CssStyleDeclaration',
   'MouseEvent',
+  'WheelEvent'
 ]

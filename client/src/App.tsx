@@ -16,12 +16,9 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
-    wasm
-      ? wasm.resize_canvas(
-          width - innerSidebarWidth - outerSidebarWidth,
-          height
-        )
-      : console.log('no canvas to resize :(');
+    if (wasm) {
+      wasm.resize_canvas(width - innerSidebarWidth - outerSidebarWidth, height);
+    } else console.log('no canvas to resize :(');
   }, [wasm, width, height]);
 
   if (wasm) {
