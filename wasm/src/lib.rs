@@ -1,17 +1,7 @@
 use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
-pub fn add_two_ints(a: u32, b: u32) -> u32 {
-   a + b
-}
-
-#[wasm_bindgen]
-pub fn fib(n: u32) -> u32 {
-   if n == 0 || n == 1 {
-      return n;
-   }
-   fib(n - 1) + fib(n - 2)
-}
+use std::cell::Cell;
+use std::rc::Rc;
+use wasm_bindgen::JsCast;
 
 #[wasm_bindgen]
 pub fn console_log(message: &str) {
@@ -20,40 +10,41 @@ pub fn console_log(message: &str) {
    web_sys::console::log(&array);
 }
 
-#[wasm_bindgen]
-pub fn replace_element() {
-   let doc = web_sys::window().unwrap().document().unwrap();
-   let element = doc.get_element_by_id("replace");
-
-   match element {
-      Some(s) => {
-         console_log(&s.id());
-      },
-      None => {
-         console_log("No element with the id 'replace'");
-      },
-   };
-}
-
-#[wasm_bindgen]
-pub fn main() {
+#[wasm_bindgen(start)]
+pub fn greeting() {
    console_log("Hello from wasm!");
 }
 
-use std::cell::Cell;
-use std::rc::Rc;
-use wasm_bindgen::JsCast;
+#[wasm_bindgen]
+pub fn resize_canvas(width: u32, height: u32) -> Result<(), JsValue> {
+    let document = web_sys::window().unwrap().document().unwrap();
+    let canvas = document.get_element_by_id("canvas");
+    match canvas {
+        Some(x) => {
+            x.dyn_ref::<web_sys::HtmlCanvasElement>()
+            .unwrap()
+            .set_width(width);
+            x.dyn_ref::<web_sys::HtmlCanvasElement>()
+            .unwrap()
+            .set_height(height);
+            return Ok(())
+        },
+        None => { return Ok(() )}
+    }
+}
 
-#[wasm_bindgen(start)]
-pub fn start() -> Result<(), JsValue> {
+#[wasm_bindgen]
+pub fn create_canvas() -> Result<(), JsValue> {
     let document = web_sys::window().unwrap().document().unwrap();
     let canvas = document
         .create_element("canvas")?
         .dyn_into::<web_sys::HtmlCanvasElement>()?;
     document.body().unwrap().append_child(&canvas)?;
-    canvas.set_width(640);
-    canvas.set_height(480);
-    canvas.style().set_property("border", "solid")?;
+    canvas.set_width(100);
+    canvas.set_height(100);
+    canvas.style()
+    .set_property("background", "lightpink")?;
+    canvas.set_id("canvas");
     let context = canvas
         .get_context("2d")?
         .unwrap()
@@ -96,6 +87,8 @@ pub fn start() -> Result<(), JsValue> {
         canvas.add_event_listener_with_callback("mouseup", closure.as_ref().unchecked_ref())?;
         closure.forget();
     }
+
+    console_log("canvas create successful");
 
     Ok(())
    }
