@@ -2,14 +2,15 @@ import React, { createRef, useEffect } from 'react';
 import playArea from './pixi/playArea';
 
 import useWindowDimensions from '../utilities/window';
+import OuterSidebar from './interface/OuterSidebar';
+import InnerSidebar from './interface/InnerSidebar';
 
 const App = () => {
   const canvasRef = createRef<HTMLDivElement>();
 
   useEffect(() => {
     canvasRef?.current?.appendChild(playArea.view);
-    return () => playArea.stop();
-  }, []);
+  }, [canvasRef]);
 
   const { width, height } = useWindowDimensions();
   const outerSidebarWidth = 80;
@@ -17,36 +18,19 @@ const App = () => {
 
   useEffect(() => {
     if (playArea && canvasRef.current) {
-      playArea.renderer.resize(width - outerSidebarWidth - innerSidebarWidth, height);
-    } else {
-      console.log('no canvas to resize :(');
+      playArea.renderer.resize(
+        width - outerSidebarWidth - innerSidebarWidth,
+        height
+      );
     }
-  }, [playArea, width, height]);
+  }, [canvasRef, width, height]);
 
   return (
     <div style={{ width: '100vw' }} className='App'>
-      <div
-        id='placeholder-outer-sidebar'
-        style={{
-          background: '#444',
-          width: `${outerSidebarWidth}px`,
-          height: '100vh',
-          float: 'left',
-        }}
-      >
-        options, user profilepic, etc etc
-      </div>
-      <div
-        id='placeholder-inner-sidebar'
-        style={{
-          background: '#888',
-          width: `${innerSidebarWidth}px`,
-          height: '100vh',
-          float: 'left',
-        }}
-      >
-        chat and event log and stuff
-      </div>
+      <OuterSidebar width={outerSidebarWidth} />
+      <InnerSidebar width={innerSidebarWidth} />
+
+      {/* render play are in this div. figure out how to get this into a component */}
       <div style={{ overflow: 'auto' }} ref={canvasRef} />
     </div>
   );
