@@ -1,4 +1,4 @@
-import React, { createRef, useEffect } from 'react';
+import { createRef, useEffect } from 'react';
 import playArea from './pixi/playArea';
 
 import useWindowDimensions from '../utilities/window';
