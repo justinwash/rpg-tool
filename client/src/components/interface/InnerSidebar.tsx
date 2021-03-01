@@ -8,22 +8,36 @@ const InnerSidebar = (props: { width: number }) => {
   useEffect(() => {
     console.log('adding event listener for chat');
     client.addEventListener('message', function (event) {
+      let message = JSON.parse(event.data);
+      if (message.channel !== 'group') return;
       setMessages((messages) => [...messages, JSON.parse(event.data)]);
     });
   }, []);
 
   const sendMessage = (message: string) => {
-    if (newMessage === '') return;
-
-    client.send(
-      JSON.stringify({
-        client_id: 1234,
-        username: process.env.REACT_APP_USERNAME, // do this better
-        channel: 'group',
-        timestamp: Date.now(),
-        message: message,
-      })
-    );
+    if (message === '') return;
+    if (message.startsWith('/roll ')) {
+      message = message.replace('/roll ', '');
+      client.send(
+        JSON.stringify({
+          client_id: 1234,
+          username: process.env.REACT_APP_USERNAME, // do this better
+          channel: 'roll',
+          timestamp: Date.now(),
+          message: message,
+        })
+      );
+    } else {
+      client.send(
+        JSON.stringify({
+          client_id: 1234,
+          username: process.env.REACT_APP_USERNAME, // do this better
+          channel: 'group',
+          timestamp: Date.now(),
+          message: message,
+        })
+      );
+    }
   };
 
   return (
