@@ -1,36 +1,120 @@
-use serde_json::{Result, Value};
-use std::collections::HashMap;
-use uuid::Uuid;
-use ws::listen;
+extern crate env_logger;
+extern crate mio_extras;
+extern crate time;
+extern crate ws;
 
-struct _Message {
-  client_id: Uuid,
-  channel: String,
-  username: String,
-  message: String,
-  timestamp: String,
-}
+use std::str::from_utf8;
+use time::OffsetDateTime;
 
-struct Client {
-  client_id: Uuid,
-  username: String,
-  socket: &'static ws::Sender,
-}
+use mio_extras::timer::Timeout;
+
+use ws::util::Token;
+use ws::{
+  listen, CloseCode, Error, ErrorKind, Frame, Handler, Handshake, Message, OpCode, Result, Sender,
+};
+
+use serde_json::*;
+
+const PING: Token = Token(1);
+const EXPIRE: Token = Token(2);
 
 fn main() {
-  let mut clients: HashMap<Uuid, Client> = HashMap::new();
+  env_logger::init();
 
-  if let Err(error) = listen("127.0.0.1:9001", |out: ws::Sender| {
-    move |msg: ws::Message| {
-      let message: Value =
-        serde_json::from_str(msg.as_text().unwrap()).expect("Could not parse message");
-      if message["channel"] == "registration" {}
+  listen("127.0.0.1:9001", |out| Server {
+    out,
+    ping_timeout: None,
+    expire_timeout: None,
+  })
+  .unwrap();
+}
 
-      println!("Server got message '{}'", message);
+struct Server {
+  out: Sender,
+  ping_timeout: Option<Timeout>,
+  expire_timeout: Option<Timeout>,
+}
 
-      out.send(msg)
+impl Handler for Server {
+  fn on_open(&mut self, handshake: Handshake) -> Result<()> {
+    println!("New client connection '{:?}'. ", handshake.peer_addr);
+    self.out.timeout(5_000, PING)?;
+    self.out.timeout(30_000, EXPIRE)
+  }
+
+  fn on_message(&mut self, msg: Message) -> Result<()> {
+    println!("Server got message '{}'. ", msg);
+
+    let msg_data: Value = serde_json::from_str(msg.as_text().unwrap())
+      .expect(&format!("Couldn't parse message: {:?}", msg));
+
+    if msg_data["channel"] == "group" {
+      self.out.broadcast(msg)
+    } else {
+      Ok(())
     }
-  }) {
-    println!("Failed to create WebSocket due to {:?}", error);
+  }
+
+  fn on_close(&mut self, code: CloseCode, reason: &str) {
+    println!("WebSocket closing for ({:?}) {}", code, reason);
+
+    if let Some(t) = self.ping_timeout.take() {
+      self.out.cancel(t).unwrap();
+    }
+    if let Some(t) = self.expire_timeout.take() {
+      self.out.cancel(t).unwrap();
+    }
+  }
+
+  fn on_timeout(&mut self, event: Token) -> Result<()> {
+    match event {
+      PING => {
+        self.out.ping(
+          (OffsetDateTime::now_utc().unix_timestamp()
+            - OffsetDateTime::unix_epoch().unix_timestamp())
+          .to_string()
+          .into(),
+        )?;
+        self.ping_timeout.take();
+        self.out.timeout(5_000, PING)
+      }
+      EXPIRE => self.out.close(CloseCode::Away),
+      _ => Err(Error::new(
+        ErrorKind::Internal,
+        "Invalid timeout token encountered!",
+      )),
+    }
+  }
+
+  fn on_new_timeout(&mut self, event: Token, timeout: Timeout) -> Result<()> {
+    if event == EXPIRE {
+      if let Some(t) = self.expire_timeout.take() {
+        self.out.cancel(t)?
+      }
+      self.expire_timeout = Some(timeout)
+    } else {
+      if let Some(t) = self.ping_timeout.take() {
+        self.out.cancel(t)?
+      }
+      self.ping_timeout = Some(timeout)
+    }
+
+    Ok(())
+  }
+
+  fn on_frame(&mut self, frame: Frame) -> Result<Option<Frame>> {
+    if frame.opcode() == OpCode::Pong {
+      if !from_utf8(frame.payload())?.parse::<u64>().is_ok() {
+        println!("Received bad pong.");
+      }
+    }
+
+    self.out.timeout(30_000, EXPIRE)?;
+
+    DefaultHandler.on_frame(frame)
   }
 }
+
+struct DefaultHandler;
+
+impl Handler for DefaultHandler {}
