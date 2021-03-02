@@ -21,6 +21,22 @@ struct ClientMessage {
   message: String,
 }
 
+#[derive(Serialize, Deserialize)]
+struct TokenPosition {
+  x: i32,
+  y: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+struct TokenMessage {
+  client_id: String,
+  username: String,
+  channel: String,
+  timestamp: String,
+  token_id: String,
+  token_position: TokenPosition,
+}
+
 struct Server {
   out: Sender,
 }
@@ -32,14 +48,41 @@ impl Handler for Server {
   }
 
   fn on_message(&mut self, msg: Message) -> Result<()> {
-    println!("Server got message '{}'. ", msg);
-
     let msg_data: Value = serde_json::from_str(msg.as_text().unwrap())
       .expect(&format!("Couldn't parse message: {:?}", msg));
 
+    println!("Server got message '{}'. ", msg_data);
+
     match msg_data["channel"].as_str().unwrap() {
-      "board" => self.out.broadcast(msg),
+      "token" => {
+        let token_msg = TokenMessage {
+          client_id: msg_data["client_id"].to_string(),
+          username: msg_data["username"].to_string(),
+          channel: msg_data["channel"].to_string(),
+          timestamp: (OffsetDateTime::now_utc().unix_timestamp()
+            - OffsetDateTime::unix_epoch().unix_timestamp())
+          .to_string()
+          .into(),
+          token_id: msg_data["token_id"].to_string(),
+          token_position: TokenPosition {
+            x: msg_data["token_position"]["x"]
+              .to_string()
+              .parse::<i32>()
+              .unwrap(),
+            y: msg_data["token_position"]["y"]
+              .to_string()
+              .parse::<i32>()
+              .unwrap(),
+          },
+        };
+
+        self
+          .out
+          .broadcast(serde_json::to_string(&token_msg).unwrap())
+      }
+
       "group" => self.out.broadcast(msg),
+
       "roll" => {
         let result: u16;
         let mut res_msg = ClientMessage {

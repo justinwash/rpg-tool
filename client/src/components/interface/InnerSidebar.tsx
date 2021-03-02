@@ -67,7 +67,7 @@ const InnerSidebar = (props: { width: number }) => {
           }}
         >
           <span style={{ height: '100%' }}></span>
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <span
               style={{
                 margin: '0px 10px',
@@ -75,6 +75,7 @@ const InnerSidebar = (props: { width: number }) => {
                 padding: '2px 0px',
                 wordWrap: 'break-word',
               }}
+              key={`message-${index}`}
             >
               <b>{message.username}: </b>
               <span>{message.message}</span>
