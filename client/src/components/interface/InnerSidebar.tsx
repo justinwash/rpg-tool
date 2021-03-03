@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import client from '../../client';
+import { cleanJsonString } from '../../utilities/json';
 
 const InnerSidebar = (props: { width: number }) => {
   const [messages, setMessages] = useState<Record<string, any>[]>([]);
@@ -9,7 +10,7 @@ const InnerSidebar = (props: { width: number }) => {
     console.log('adding event listener for chat');
     client.addEventListener('message', function (event) {
       let message = JSON.parse(event.data);
-      if (message.channel !== 'group') return;
+      if (cleanJsonString(message.channel) !== 'group') return;
       setMessages((messages) => [...messages, JSON.parse(event.data)]);
     });
   }, []);
@@ -77,8 +78,8 @@ const InnerSidebar = (props: { width: number }) => {
               }}
               key={`message-${index}`}
             >
-              <b>{message.username}: </b>
-              <span>{message.message}</span>
+              <b>{cleanJsonString(message.username)}: </b>
+              <span>{cleanJsonString(message.message)}</span>
             </span>
           ))}
         </div>
