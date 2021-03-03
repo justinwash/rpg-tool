@@ -24,7 +24,7 @@ A multiplayer rpg mapping tool
 
 - cd into rpg-tool/server and run `cargo build`
 
-  | Chances are high you'll run into some issues here if you've never worked with rust before. Things like `xcode-tools` or `make` not being installed, etc. Google the error messages until it compiles successfully (or ask me for help).
+  > Chances are high you'll run into some issues here if you've never worked with rust before. Things like `xcode-tools` or `make` not being installed, etc. Google the error messages until it compiles successfully (or ask me for help).
   
 - Start up the rust server with `cargo run`
 
