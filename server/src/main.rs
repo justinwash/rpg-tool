@@ -1,3 +1,8 @@
+#[macro_use]
+extern crate diesel;
+pub mod models;
+pub mod schema;
+
 extern crate mio_extras;
 extern crate time;
 extern crate ws;
@@ -7,7 +12,15 @@ use ws::{listen, CloseCode, Handler, Handshake, Message, Result, Sender};
 mod message;
 use message::*;
 
+mod db;
+use db::*;
+
 fn main() {
+  let _db = get_db_connection();
+
+  // for testing
+  // let new_image = create_image(&db, "https://cdn.discordapp.com/attachments/298034711949869056/399212120362975233/PMCSpawnsnoCalloutsBlue.png");
+  // println!("{:?}", new_image.id);
   listen("127.0.0.1:9001", |out| Server { out }).unwrap();
 }
 

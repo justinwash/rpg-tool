@@ -23,6 +23,14 @@ A multiplayer rpg mapping tool
 
 ## Development
 
+Install PostgreSQL
+
+`brew install postgresql`
+
+Install the `diesel` cli
+
+`brew install diesel`
+
 When working you won't want to have to recompile your server manually every time you make a change.
 
 Install the watch command for Cargo

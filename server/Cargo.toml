@@ -16,6 +16,8 @@ mio-extras = "2.0"
 env_logger = "0.8.3"
 time = "0.2.25"
 cute-dnd-dice = "4.0.0"
+dotenv = "0.15.0"
+diesel = { version = "1.4.4", features = ["postgres"] }
 
 # [dev-dependencies]
 # clap = "2.31.2"
