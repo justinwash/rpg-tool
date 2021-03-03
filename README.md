@@ -16,11 +16,11 @@ A multiplayer rpg mapping tool
   
 - Install PostgreSQL
 
-`brew install postgresql`
+  `brew install postgresql`
 
 - Install the `diesel` cli
 
-`brew install diesel`
+  `brew install diesel`
 
 - cd into rpg-tool/server and run `cargo build`
 
@@ -38,12 +38,12 @@ When working you won't want to have to recompile your server manually every time
 
 Install the watch command for Cargo
 
-`cargo install cargo-watch`
+  `cargo install cargo-watch`
 
 Then when starting up the project run (in two separate terminal tabs)
 
-`npm start` in /client
+  `npm start` in /client
 
-`cargo watch -i .gitignore -i "target/*" -s "cargo run"` in /server
+  `cargo watch -i .gitignore -i "target/*" -s "cargo run"` in /server
 
 This tells cargo to recompile your rust project on save, and since npm sym-links to the /target/pkg directory it will also trigger a refresh of the react dev server and refresh your browser
