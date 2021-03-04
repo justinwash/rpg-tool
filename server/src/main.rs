@@ -9,7 +9,7 @@ extern crate mio_extras;
 extern crate time;
 extern crate ws;
 
-use ws::{listen, CloseCode, Handler, Handshake, Message, Result, Sender};
+use ws::{listen, Handler, Handshake, Message, Result, Sender};
 
 mod db;
 mod message;

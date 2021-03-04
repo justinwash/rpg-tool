@@ -1,6 +1,7 @@
 extern crate diesel;
 extern crate dotenv;
 
+use crate::schema::image::dsl::*;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -15,13 +16,17 @@ pub fn get_db_connection() -> PgConnection {
 
 use crate::models::{Image, NewImage};
 
-pub fn create_image<'a>(db: &PgConnection, url: &'a str) -> Image {
+pub fn create_image<'a>(db: &PgConnection, image_url: &'a str) -> Image {
   use super::schema::image;
 
-  let new_post = NewImage { url: url };
+  let new_post = NewImage { url: image_url };
 
-  diesel::insert_into(image::table)
+  let res = diesel::insert_into(image::table)
     .values(&new_post)
-    .get_result(db)
-    .expect("Error saving new post")
+    .get_result(db);
+
+  match res {
+    Ok(i) => i,
+    _ => image.filter(url.eq(url)).first(db).unwrap(),
+  }
 }

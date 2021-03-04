@@ -2,7 +2,9 @@ import * as PIXI from 'pixi.js-legacy';
 import client from '../../client';
 import { cleanJsonString } from '../../utilities/json';
 
-const defaultMapImage = PIXI.Texture.from('assets/placeholders/maps/test_map.png');
+const defaultMapImage = PIXI.Texture.from(
+  'assets/placeholders/maps/test_map.png'
+);
 let map = new PIXI.Sprite(defaultMapImage);
 
 export const createMap = (playArea: PIXI.Container) => {
@@ -18,6 +20,7 @@ export const createMap = (playArea: PIXI.Container) => {
   client.addEventListener('message', (event) => {
     let message = JSON.parse(event.data);
     if (cleanJsonString(message.channel) !== 'map') return;
+    console.log(cleanJsonString(message.message));
 
     let newMapImage = PIXI.Texture.from(cleanJsonString(message.message));
     let newMap = new PIXI.Sprite(newMapImage);
