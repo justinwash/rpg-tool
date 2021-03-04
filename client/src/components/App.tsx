@@ -4,6 +4,7 @@ import playArea from './pixi/playArea';
 import useWindowDimensions from '../utilities/window';
 import OuterSidebar from './interface/OuterSidebar';
 import InnerSidebar from './interface/InnerSidebar';
+import { ToolBox } from './interface/toolbox';
 
 const App = () => {
   const canvasRef = createRef<HTMLDivElement>();
@@ -29,6 +30,7 @@ const App = () => {
     <div style={{ width: '100vw' }} className='App'>
       <OuterSidebar width={outerSidebarWidth} />
       <InnerSidebar width={innerSidebarWidth} />
+      <ToolBox sidebarWidth={innerSidebarWidth + outerSidebarWidth} />
 
       {/* render play are in this div. figure out how to get this into a component */}
       <div style={{ overflow: 'auto' }} ref={canvasRef} />
