@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { drawLine } from "../pixi/map";
+import { playArea } from "../pixi/playArea";
 
 export const ToolBox = (props: {
     sidebarWidth: number
@@ -87,4 +89,8 @@ const createToolboxButton = (
 
 const handleDrawButtonClick = (previouslyActive: boolean) => () => {
     console.log(`Button is now ${!previouslyActive ? 'active' : 'inactive'}`);
+
+    if (!previouslyActive) {
+        drawLine(playArea)
+    }
 }
