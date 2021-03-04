@@ -9,7 +9,7 @@ extern crate mio_extras;
 extern crate time;
 extern crate ws;
 
-use ws::{listen, CloseCode, Handler, Handshake, Message, Result, Sender};
+use ws::{listen, Handler, Handshake, Message, Result, Sender};
 
 mod db;
 mod message;
@@ -33,7 +33,7 @@ struct Server {
 }
 
 impl Handler for Server {
-  fn on_open(&mut self, handshake: Handshake) -> Result<()> {
+  fn on_open(&mut self, _handshake: Handshake) -> Result<()> {
     Ok(())
   }
 
