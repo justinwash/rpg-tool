@@ -20,9 +20,6 @@ use message::*;
 fn main() {
   let _db = get_db_connection();
 
-  // for testing
-  // let new_image = create_image(&db, "https://cdn.discordapp.com/attachments/298034711949869056/399212120362975233/PMCSpawnsnoCalloutsBlue.png");
-  // println!("{:?}", new_image.id);
   listen("127.0.0.1:9001", |out| Server {
     out,
     db: get_db_connection(),
@@ -37,13 +34,11 @@ struct Server {
 
 impl Handler for Server {
   fn on_open(&mut self, handshake: Handshake) -> Result<()> {
-    println!("New client connection '{:?}'. ", handshake.peer_addr);
     Ok(())
   }
 
   fn on_message(&mut self, msg: Message) -> Result<()> {
     let msg_data = parse_message(&msg);
-    println!("Server got message '{}'. ", msg_data);
 
     match msg_data["channel"].as_str().unwrap() {
       "token" => {
@@ -81,7 +76,5 @@ impl Handler for Server {
     }
   }
 
-  fn on_close(&mut self, code: CloseCode, reason: &str) {
-    println!("WebSocket closing for ({:?}) {}", code, reason)
-  }
+  fn on_close(&mut self, code: CloseCode, reason: &str) {}
 }

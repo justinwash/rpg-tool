@@ -4,8 +4,6 @@ use time::OffsetDateTime;
 use crate::message::*;
 
 pub fn generate_roll_message(msg_data: Value) -> ClientMessage {
-  println!("{}", msg_data);
-
   let result: u16;
   let mut result_msg = ClientMessage {
     client_id: 0.to_string(),
