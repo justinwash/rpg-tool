@@ -75,6 +75,4 @@ impl Handler for Server {
       _ => Ok(()),
     }
   }
-
-  fn on_close(&mut self, code: CloseCode, reason: &str) {}
 }
