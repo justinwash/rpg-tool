@@ -28,6 +28,18 @@ const InnerSidebar = (props: { width: number }) => {
           message: message,
         })
       );
+    } else if (message.startsWith('/newmap ')) {
+      message = message.replace('/newmap ', '');
+      client.send(
+        JSON.stringify({
+          client_id: 1234,
+          username: process.env.REACT_APP_USERNAME, // do this better
+          channel: 'map',
+          command: 'new',
+          timestamp: Date.now(),
+          message: message,
+        })
+      );
     } else {
       client.send(
         JSON.stringify({

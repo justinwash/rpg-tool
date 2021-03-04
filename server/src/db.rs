@@ -15,13 +15,13 @@ pub fn get_db_connection() -> PgConnection {
 
 use crate::models::{Image, NewImage};
 
-pub fn create_image<'a>(conn: &PgConnection, url: &'a str) -> Image {
+pub fn create_image<'a>(db: &PgConnection, url: &'a str) -> Image {
   use super::schema::image;
 
   let new_post = NewImage { url: url };
 
   diesel::insert_into(image::table)
     .values(&new_post)
-    .get_result(conn)
+    .get_result(db)
     .expect("Error saving new post")
 }

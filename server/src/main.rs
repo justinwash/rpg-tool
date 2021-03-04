@@ -3,17 +3,19 @@ extern crate diesel;
 pub mod models;
 pub mod schema;
 
+use diesel::pg::PgConnection;
+
 extern crate mio_extras;
 extern crate time;
 extern crate ws;
 
 use ws::{listen, CloseCode, Handler, Handshake, Message, Result, Sender};
 
-mod message;
-use message::*;
-
 mod db;
+mod message;
+
 use db::*;
+use message::*;
 
 fn main() {
   let _db = get_db_connection();
@@ -21,10 +23,15 @@ fn main() {
   // for testing
   // let new_image = create_image(&db, "https://cdn.discordapp.com/attachments/298034711949869056/399212120362975233/PMCSpawnsnoCalloutsBlue.png");
   // println!("{:?}", new_image.id);
-  listen("127.0.0.1:9001", |out| Server { out }).unwrap();
+  listen("127.0.0.1:9001", |out| Server {
+    out,
+    db: get_db_connection(),
+  })
+  .unwrap();
 }
 
 struct Server {
+  db: PgConnection,
   out: Sender,
 }
 
@@ -52,6 +59,23 @@ impl Handler for Server {
       "roll" => {
         let roll_msg = serde_json::to_string(&generate_roll_message(msg_data)).unwrap();
         self.out.broadcast(roll_msg)
+      }
+
+      "map" => {
+        let res = match msg_data["command"].as_str().unwrap() {
+          "new" => {
+            let created_map = generate_map_change_message(
+              &msg_data,
+              create_map(&self.db, msg_data["message"].to_string()),
+            );
+
+            let map_msg = serde_json::to_string(&created_map).unwrap();
+            self.out.broadcast(map_msg)
+          }
+          _ => Ok(()),
+        };
+
+        res
       }
       _ => Ok(()),
     }
