@@ -1,12 +1,11 @@
 import * as PIXI from 'pixi.js-legacy';
-import { Viewport } from 'pixi-viewport';
 import client from '../../client';
 import { cleanJsonString } from '../../utilities/json';
 
 const defaultMapImage = PIXI.Texture.from('assets/placeholders/maps/test_map.png');
 let map = new PIXI.Sprite(defaultMapImage);
 
-export const createMap = (viewport: Viewport) => {
+export const createMap = (playArea: PIXI.Container) => {
   map.scale.set(1);
 
   map.x = 0;
@@ -14,7 +13,7 @@ export const createMap = (viewport: Viewport) => {
 
   map.zIndex = 0;
 
-  viewport.addChild(map);
+  playArea.addChild(map);
 
   client.addEventListener('message', (event) => {
     let message = JSON.parse(event.data);
@@ -30,7 +29,7 @@ export const createMap = (viewport: Viewport) => {
 
     newMap.zIndex = 0;
 
-    viewport.removeChild(map);
-    viewport.addChild(newMap);
+    playArea.removeChild(map);
+    playArea.addChild(newMap);
   });
 };

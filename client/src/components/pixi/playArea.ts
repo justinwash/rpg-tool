@@ -4,11 +4,14 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { createCharacterTokens } from './tokens';
 import { createMap } from './map';
 
-const playArea = new PIXI.Application({ backgroundColor: 0x1099bb });
+const app = new PIXI.Application({ backgroundColor: 0x1099bb });
 
-playArea.ticker.add((delta) => {
+app.ticker.add((delta) => {
   TWEEN.update();
 });
+
+const playArea = new PIXI.Container();
+playArea.sortableChildren = true;
 
 const viewport = new Viewport({
   screenWidth: window.innerWidth,
@@ -16,18 +19,20 @@ const viewport = new Viewport({
   worldWidth: 1000,
   worldHeight: 1000,
 
-  interaction: playArea.renderer.plugins.interaction,
+  interaction: app.renderer.plugins.interaction,
 });
 
-playArea.stage.addChild(viewport);
+viewport.addChild(playArea);
 
 viewport.drag().pinch().wheel().decelerate({
   friction: 0.75,
 });
 
-document.body.appendChild(playArea.view);
+app.stage.addChild(viewport);
 
-createMap(viewport);
-createCharacterTokens(viewport);
+document.body.appendChild(app.view);
 
-export default playArea;
+createMap(playArea);
+createCharacterTokens(playArea);
+
+export default app;

@@ -1,12 +1,11 @@
 import * as PIXI from 'pixi.js-legacy';
-import { Viewport } from 'pixi-viewport';
 import client from '../../client';
 import * as TWEEN from '@tweenjs/tween.js';
 import { cleanJsonString } from '../../utilities/json';
 
 export const tokens: Record<string, PIXI.Sprite> = {};
 
-export const createCharacterTokens = (viewport: Viewport) => {
+export const createCharacterTokens = (playArea: PIXI.Container) => {
   const icon = [
     { name: 'swords', texture: PIXI.Texture.from('assets/placeholders/icons/swords.png') },
     { name: 'shield', texture: PIXI.Texture.from('assets/placeholders/icons/shield.png') },
@@ -29,8 +28,10 @@ export const createCharacterTokens = (viewport: Viewport) => {
     token.anchor.set(0.5);
     token.scale.set(0.25);
 
+    token.zIndex = 1;
+
     tokens[token.name] = token;
-    viewport.addChild(token);
+    playArea.addChild(token);
 
     token
       .on('pointerdown', (event: any) => onDragStart(event, token))
