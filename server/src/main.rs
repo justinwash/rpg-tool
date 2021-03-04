@@ -33,7 +33,7 @@ struct Server {
 }
 
 impl Handler for Server {
-  fn on_open(&mut self, handshake: Handshake) -> Result<()> {
+  fn on_open(&mut self, _handshake: Handshake) -> Result<()> {
     Ok(())
   }
 
