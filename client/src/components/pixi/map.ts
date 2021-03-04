@@ -1,3 +1,4 @@
+import { realpath } from 'fs';
 import * as PIXI from 'pixi.js-legacy';
 import client from '../../client';
 import { cleanJsonString } from '../../utilities/json';
@@ -36,3 +37,18 @@ export const createMap = (playArea: PIXI.Container) => {
     playArea.addChild(newMap);
   });
 };
+
+export const drawLine = (playArea: PIXI.Container) => {
+  const myLine = new PIXI.Graphics();
+
+  myLine.lineStyle(2, 0xFFFFFF, 1);
+  myLine.moveTo(0, 0);
+  myLine.lineTo(100, 200);
+  myLine.lineTo(200, 200);
+  myLine.lineTo(240, 100);
+
+  myLine.position.x = 50;
+  myLine.position.y = 50;
+
+  playArea.addChild(myLine);
+}

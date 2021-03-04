@@ -10,7 +10,7 @@ app.ticker.add((delta) => {
   TWEEN.update();
 });
 
-const playArea = new PIXI.Container();
+export const playArea = new PIXI.Container();
 playArea.sortableChildren = true;
 
 const viewport = new Viewport({
@@ -34,5 +34,7 @@ document.body.appendChild(app.view);
 
 createMap(playArea);
 createCharacterTokens(playArea);
+
+
 
 export default app;
