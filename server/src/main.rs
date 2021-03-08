@@ -23,11 +23,40 @@ use warp::Filter;
 async fn main() {
   let _db = get_db_connection();
 
+  use models::NewUser;
+  fn json_body() -> impl Filter<Extract = (NewUser,), Error = warp::Rejection> + Clone {
+    warp::body::content_length_limit(1024 * 16).and(warp::body::json())
+  }
+
   let hello = warp::path!("hello" / String)
     .map(|name| format!("Hello, {} from the http server!", name))
     .with(warp::cors().allow_any_origin());
 
-  let warp = warp::serve(hello).run(([127, 0, 0, 1], 9002));
+  let add_user = warp::post()
+    .and(warp::path("user"))
+    .and(warp::path::end())
+    .and(json_body())
+    .map(|user: NewUser| {
+      // why
+      // let new_user = create_user(&_db, &user);
+      format!("got add_user request: {:?}", user)
+    })
+    .with(
+      warp::cors()
+        .allow_any_origin()
+        .allow_headers(vec![
+          "User-Agent",
+          "Sec-Fetch-Mode",
+          "Referer",
+          "Origin",
+          "Access-Control-Request-Method",
+          "Access-Control-Request-Headers",
+          "content-type",
+        ])
+        .allow_methods(vec!["POST"]),
+    );
+
+  let warp = warp::serve(hello.or(add_user)).run(([127, 0, 0, 1], 9002));
 
   let runtime = tokio::runtime::Runtime::new().unwrap();
 

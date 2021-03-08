@@ -1,0 +1,1 @@
+ALTER TABLE public."user" RENAME COLUMN user_id TO google_id;

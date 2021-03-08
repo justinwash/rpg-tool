@@ -15,10 +15,16 @@ const LoginButton = () => {
       //testing
       if (API_URL)
         http
-          .get(`${API_URL}/hello/${profile.getName()}`)
+          .post(`${API_URL}/user`, {
+            google_id: profile.getId(),
+            first_name: profile.getGivenName(),
+            last_name: profile.getFamilyName(),
+            image: profile.getImageUrl(),
+            email: profile.getEmail(),
+          })
           .then((res) => {
             if (res?.data) {
-              console.log(res.data.replace('%20', ' '));
+              console.log(res.data);
             }
           })
           .catch((err) => console.log(err));
