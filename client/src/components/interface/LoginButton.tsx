@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthProvider';
 import { AuthState } from '../../types/AuthState';
+import http from '../../http';
+import { CLIENT_ID, API_URL } from '../../environment';
 
 const LoginButton = () => {
   const auth = useContext(AuthContext);
@@ -9,7 +11,18 @@ const LoginButton = () => {
   useEffect(() => {
     const onSuccess = (authData: any) => {
       let profile = authData.getBasicProfile();
-      console.log(profile.getId());
+
+      //testing
+      if (API_URL)
+        http
+          .get(`${API_URL}/hello/${profile.getName()}`)
+          .then((res) => {
+            if (res?.data) {
+              console.log(res.data.replace('%20', ' '));
+            }
+          })
+          .catch((err) => console.log(err));
+
       auth.setAuthState({ googleUser: profile } as AuthState);
     };
 
@@ -28,7 +41,7 @@ const LoginButton = () => {
 
     gapi.load('auth2', () => {
       gapi.auth2.init({
-        client_id: process.env.CLIENT_ID,
+        client_id: CLIENT_ID,
       });
 
       gapi.signin2.render('signin-button', {

@@ -23,26 +23,22 @@ use warp::Filter;
 async fn main() {
   let _db = get_db_connection();
 
+  let hello = warp::path!("hello" / String)
+    .map(|name| format!("Hello, {} from the http server!", name))
+    .with(warp::cors().allow_any_origin());
+
+  let warp = warp::serve(hello).run(([127, 0, 0, 1], 9002));
+
+  let runtime = tokio::runtime::Runtime::new().unwrap();
+
+  runtime.spawn(warp);
+
   listen("127.0.0.1:9001", |out| WebsocketServer {
     out,
     db: get_db_connection(),
   })
   .unwrap();
-
-  // GET /hello/warp => 200 OK with body "Hello, warp!"
-  let hello = warp::path!("hello" / String).map(|name| format!("Hello, {}!", name));
-  warp::serve(hello).run(([127, 0, 0, 1], 9002)).await;
 }
-
-// fn main() {
-//   let _db = get_db_connection();
-
-//   listen("127.0.0.1:9001", |out| WebsocketServer {
-//     out,
-//     db: get_db_connection(),
-//   })
-//   .unwrap();
-// }
 
 struct WebsocketServer {
   db: PgConnection,
