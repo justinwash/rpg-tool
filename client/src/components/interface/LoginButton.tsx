@@ -44,7 +44,7 @@ const LoginButton = () => {
   return (
     <div>
       <div id='signin-button'></div>
-      <button onClick={signOut}>Sign Out</button>
+      {auth.authState.Ca && <button onClick={signOut}>Sign Out</button>}
     </div>
   );
 };
