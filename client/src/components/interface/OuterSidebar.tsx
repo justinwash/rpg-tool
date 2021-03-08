@@ -19,7 +19,7 @@ const OuterSidebar = (props: { width: number }) => {
     >
       <LoginButton />
 
-      {auth.authState.Ca && <img style={{ width: '80%' }} alt='user-icon' src='assets/placeholders/icons/user.png' />}
+      {auth.authState.googleUser && <img style={{ width: '80%' }} alt='user-icon' src={auth.authState.googleUser.getImageUrl()} />}
     </div>
   );
 };
