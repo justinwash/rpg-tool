@@ -102,13 +102,14 @@ export const createCharacterTokens = (playArea: PIXI.Container) => {
 };
 
 // Will not remove the map
-export function clearAllTokens (playArea : PIXI.Container) {
-  while(playArea.children.length !== 1) { //keep removing until the map is the only thing left.
+export function clearAllTokens(playArea: PIXI.Container) {
+  while (playArea.children.length !== 1) {
+    //keep removing until the map is the only thing left.
     playArea.children.forEach((child) => {
-      if (child.name !== 'map'){
+      if (child.name !== 'map') {
         playArea.removeChild(child);
         console.log('Removing child item named: ' + child.name);
       }
-    })
+    });
   }
 }

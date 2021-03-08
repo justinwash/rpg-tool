@@ -17,22 +17,39 @@ mod message;
 use db::*;
 use message::*;
 
-fn main() {
+use warp::Filter;
+
+#[tokio::main]
+async fn main() {
   let _db = get_db_connection();
 
-  listen("127.0.0.1:9001", |out| Server {
+  listen("127.0.0.1:9001", |out| WebsocketServer {
     out,
     db: get_db_connection(),
   })
   .unwrap();
+
+  // GET /hello/warp => 200 OK with body "Hello, warp!"
+  let hello = warp::path!("hello" / String).map(|name| format!("Hello, {}!", name));
+  warp::serve(hello).run(([127, 0, 0, 1], 9002)).await;
 }
 
-struct Server {
+// fn main() {
+//   let _db = get_db_connection();
+
+//   listen("127.0.0.1:9001", |out| WebsocketServer {
+//     out,
+//     db: get_db_connection(),
+//   })
+//   .unwrap();
+// }
+
+struct WebsocketServer {
   db: PgConnection,
   out: Sender,
 }
 
-impl Handler for Server {
+impl Handler for WebsocketServer {
   fn on_open(&mut self, _handshake: Handshake) -> Result<()> {
     Ok(())
   }

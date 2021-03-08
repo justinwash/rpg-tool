@@ -35,6 +35,4 @@ document.body.appendChild(app.view);
 createMap(playArea);
 createCharacterTokens(playArea);
 
-
-
 export default app;
