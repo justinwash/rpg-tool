@@ -1,4 +1,4 @@
-import React, { createRef, useState, useEffect } from 'react';
+import React, { createRef, useEffect } from 'react';
 import playArea from './pixi/playArea';
 
 import useWindowDimensions from '../utilities/window';
@@ -6,10 +6,10 @@ import OuterSidebar from './interface/OuterSidebar';
 import InnerSidebar from './interface/InnerSidebar';
 import Toolbox from './interface/Toolbox';
 
+import AuthProvider from './contexts/AuthProvider';
+
 const App = () => {
   const canvasRef = createRef<HTMLDivElement>();
-
-  let [token, setToken] = useState();
 
   useEffect(() => {
     canvasRef?.current?.appendChild(playArea.view);
@@ -26,6 +26,7 @@ const App = () => {
   }, [canvasRef, width, height]);
 
   return (
+  <AuthProvider>
     <div style={{ width: '100vw' }} className='App'>
       <OuterSidebar width={outerSidebarWidth} />
       <InnerSidebar width={innerSidebarWidth} />
@@ -34,6 +35,7 @@ const App = () => {
       {/* render play area in this div. figure out how to get this into a component */}
       <div style={{ overflow: 'auto' }} ref={canvasRef} />
     </div>
+    </AuthProvider>
   );
 };
 

@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthProvider';
+import LoginButton from './LoginButton';
 
-const OuterSidebar = (props: { width: number }) => {
+
+const OuterSidebar = (props: { width: number}) => {
+  const auth = useContext(AuthContext)
   
 return <div
     id='placeholder-outer-sidebar'
@@ -13,9 +17,9 @@ return <div
       textAlign: 'center',
     }}
   >
-    <div className="g-signin2" data-onsuccess="onSignIn"></div>
+    <LoginButton />
 
-    <img style={{ width: '80%' }} alt='user-icon' src='assets/placeholders/icons/user.png' />
+    {auth.authState.Ca && <img style={{ width: '80%' }} alt='user-icon' src='assets/placeholders/icons/user.png' />}
   </div>
 }
 
