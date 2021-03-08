@@ -1,13 +1,15 @@
-import { createRef, useEffect } from 'react';
+import React, { createRef, useState, useEffect } from 'react';
 import playArea from './pixi/playArea';
 
 import useWindowDimensions from '../utilities/window';
 import OuterSidebar from './interface/OuterSidebar';
 import InnerSidebar from './interface/InnerSidebar';
-import { ToolBox } from './interface/toolbox';
+import Toolbox from './interface/Toolbox';
 
 const App = () => {
   const canvasRef = createRef<HTMLDivElement>();
+
+  let [token, setToken] = useState();
 
   useEffect(() => {
     canvasRef?.current?.appendChild(playArea.view);
@@ -19,10 +21,7 @@ const App = () => {
 
   useEffect(() => {
     if (playArea && canvasRef.current) {
-      playArea.renderer.resize(
-        width - outerSidebarWidth - innerSidebarWidth,
-        height
-      );
+      playArea.renderer.resize(width - outerSidebarWidth - innerSidebarWidth, height);
     }
   }, [canvasRef, width, height]);
 
@@ -30,9 +29,9 @@ const App = () => {
     <div style={{ width: '100vw' }} className='App'>
       <OuterSidebar width={outerSidebarWidth} />
       <InnerSidebar width={innerSidebarWidth} />
-      <ToolBox sidebarWidth={innerSidebarWidth + outerSidebarWidth} />
+      <Toolbox sidebarWidth={innerSidebarWidth + outerSidebarWidth} />
 
-      {/* render play are in this div. figure out how to get this into a component */}
+      {/* render play area in this div. figure out how to get this into a component */}
       <div style={{ overflow: 'auto' }} ref={canvasRef} />
     </div>
   );
