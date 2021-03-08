@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { drawLine } from '../pixi/map';
+import { drawLine, resetTokens } from "../pixi/map";
 import { playArea } from '../pixi/playArea';
+import { createCharacterTokens } from '../pixi/tokens';
 
 export const Toolbox = (props: { sidebarWidth: number }) => {
   const [pressedButton, setPressedButton] = useState('');
   const DRAW_BUTTON = 'draw';
   const ARROW_BUTTON = 'arrow';
+  const RESET_BUTTON = 'reset';
+  const ADD_BUTTON = 'add';
 
   return (
     <div
@@ -33,6 +36,11 @@ export const Toolbox = (props: { sidebarWidth: number }) => {
         {createToolboxButton(DRAW_BUTTON, '', handleDrawButtonClick(pressedButton === DRAW_BUTTON), pressedButton, setPressedButton)}
 
         {createToolboxButton(ARROW_BUTTON, '', () => {}, pressedButton, setPressedButton)}
+
+        {createToolboxButton(RESET_BUTTON, "", handleResetButtonClick(), pressedButton, setPressedButton)}
+        {/* These two buttons (reset and add) don't look like they're being pressed. Shadow doesn't come back until clicking again. */}
+        {createToolboxButton(ADD_BUTTON, "", handleAddButtonClick(), pressedButton, setPressedButton)}
+
       </div>
     </div>
   );
@@ -71,5 +79,16 @@ const handleDrawButtonClick = (previouslyActive: boolean) => () => {
     drawLine(playArea);
   }
 };
+
+//Currently only removes all tokens. Doesn't 'reset' anything back to an original place.
+const handleResetButtonClick = () => () => {
+    console.log('Reset button has been clicked');
+    resetTokens();
+}
+
+//Place holder just to get tokens back in the PlayArea using code that initializes the tokens normally.
+const handleAddButtonClick = () => () => {
+    createCharacterTokens(playArea);
+}
 
 export default Toolbox;
