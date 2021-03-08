@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import client from '../../client';
+import socket from '../../socket';
 import { cleanJsonString } from '../../utilities/json';
 
 const InnerSidebar = (props: { width: number }) => {
@@ -8,7 +8,7 @@ const InnerSidebar = (props: { width: number }) => {
 
   useEffect(() => {
     console.log('adding event listener for chat');
-    client.addEventListener('message', function (event) {
+    socket.addEventListener('message', function (event) {
       let message = JSON.parse(event.data);
       if (cleanJsonString(message.channel) !== 'group') return;
       setMessages((messages) => [...messages, JSON.parse(event.data)]);
@@ -19,9 +19,9 @@ const InnerSidebar = (props: { width: number }) => {
     if (message === '') return;
     if (message.startsWith('/roll ')) {
       message = message.replace('/roll ', '');
-      client.send(
+      socket.send(
         JSON.stringify({
-          client_id: 1234,
+          socket_id: 1234,
           username: process.env.REACT_APP_USERNAME, // do this better
           channel: 'roll',
           timestamp: Date.now(),
@@ -30,9 +30,9 @@ const InnerSidebar = (props: { width: number }) => {
       );
     } else if (message.startsWith('/newmap ')) {
       message = message.replace('/newmap ', '');
-      client.send(
+      socket.send(
         JSON.stringify({
-          client_id: 1234,
+          socket_id: 1234,
           username: process.env.REACT_APP_USERNAME, // do this better
           channel: 'map',
           command: 'new',
@@ -41,9 +41,9 @@ const InnerSidebar = (props: { width: number }) => {
         })
       );
     } else {
-      client.send(
+      socket.send(
         JSON.stringify({
-          client_id: 1234,
+          socket_id: 1234,
           username: process.env.REACT_APP_USERNAME, // do this better
           channel: 'group',
           timestamp: Date.now(),

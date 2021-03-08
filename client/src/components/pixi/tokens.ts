@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js-legacy';
-import client from '../../client';
+import socket from '../../socket';
 import * as TWEEN from '@tweenjs/tween.js';
 import { cleanJsonString } from '../../utilities/json';
 
@@ -68,9 +68,9 @@ export const createCharacterTokens = (playArea: PIXI.Container) => {
   });
 
   const sendTokenUpdate = (token: any) => {
-    client.send(
+    socket.send(
       JSON.stringify({
-        client_id: 1234,
+        socket_id: 1234,
         username: process.env.REACT_APP_USERNAME, // do this better
         channel: 'token',
         timestamp: Date.now(),
@@ -83,13 +83,13 @@ export const createCharacterTokens = (playArea: PIXI.Container) => {
     );
   };
 
-  client.addEventListener('open', () => {
+  socket.addEventListener('open', () => {
     Object.keys(tokens).forEach((tokenName) => {
       sendTokenUpdate(tokens[tokenName]);
     });
   });
 
-  client.addEventListener('message', (event: any) => {
+  socket.addEventListener('message', (event: any) => {
     let message = JSON.parse(event.data);
     if (cleanJsonString(message.channel) !== 'token') return;
 

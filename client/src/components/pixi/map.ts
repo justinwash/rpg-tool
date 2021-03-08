@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js-legacy';
-import client from '../../client';
+import socket from '../../socket';
 import { cleanJsonString } from '../../utilities/json';
 import { clearAllTokens } from './tokens';
 import { playArea } from './playArea';
@@ -19,7 +19,7 @@ export const createMap = (playArea: PIXI.Container) => {
   map.name = defaultMapImage.name;
   playArea.addChild(map);
 
-  client.addEventListener('message', (event) => {
+  socket.addEventListener('message', (event) => {
     let message = JSON.parse(event.data);
     if (cleanJsonString(message.channel) !== 'map') return;
     console.log(cleanJsonString(message.message));
