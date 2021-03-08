@@ -26,15 +26,15 @@ const App = () => {
   }, [canvasRef, width, height]);
 
   return (
-  <AuthProvider>
-    <div style={{ width: '100vw' }} className='App'>
-      <OuterSidebar width={outerSidebarWidth} />
-      <InnerSidebar width={innerSidebarWidth} />
-      <Toolbox sidebarWidth={innerSidebarWidth + outerSidebarWidth} />
+    <AuthProvider>
+      <div style={{ width: '100vw' }} className='App'>
+        <OuterSidebar width={outerSidebarWidth} />
+        <InnerSidebar width={innerSidebarWidth} />
+        <Toolbox sidebarWidth={innerSidebarWidth + outerSidebarWidth} />
 
-      {/* render play area in this div. figure out how to get this into a component */}
-      <div style={{ overflow: 'auto' }} ref={canvasRef} />
-    </div>
+        {/* render play area in this div. figure out how to get this into a component */}
+        <div style={{ overflow: 'auto' }} ref={canvasRef} />
+      </div>
     </AuthProvider>
   );
 };

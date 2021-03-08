@@ -1,13 +1,11 @@
-import { realpath } from 'fs';
 import * as PIXI from 'pixi.js-legacy';
 import client from '../../client';
 import { cleanJsonString } from '../../utilities/json';
 import { clearAllTokens } from './tokens';
 import { playArea } from './playArea';
 
-const defaultMapImage = { name: 'map', texture: PIXI.Texture.from(
-  'assets/placeholders/maps/test_map.png') };
-  
+const defaultMapImage = { name: 'map', texture: PIXI.Texture.from('assets/placeholders/maps/test_map.png') };
+
 let map = new PIXI.Sprite(defaultMapImage.texture);
 
 export const createMap = (playArea: PIXI.Container) => {
@@ -44,7 +42,7 @@ export const createMap = (playArea: PIXI.Container) => {
 export const drawLine = (playArea: PIXI.Container) => {
   const myLine = new PIXI.Graphics();
 
-  myLine.lineStyle(2, 0xFFFFFF, 1);
+  myLine.lineStyle(2, 0xffffff, 1);
   myLine.moveTo(0, 0);
   myLine.lineTo(100, 200);
   myLine.lineTo(200, 200);
@@ -54,9 +52,9 @@ export const drawLine = (playArea: PIXI.Container) => {
   myLine.position.y = 50;
 
   playArea.addChild(myLine);
-}
+};
 
 //currently just clearing all tokens
 export const resetTokens = () => {
   clearAllTokens(playArea);
-}
+};
