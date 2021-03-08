@@ -2,11 +2,13 @@ import { realpath } from 'fs';
 import * as PIXI from 'pixi.js-legacy';
 import client from '../../client';
 import { cleanJsonString } from '../../utilities/json';
+import { clearAllTokens } from './tokens';
+import { playArea } from './playArea';
 
-const defaultMapImage = PIXI.Texture.from(
-  'assets/placeholders/maps/test_map.png'
-);
-let map = new PIXI.Sprite(defaultMapImage);
+const defaultMapImage = { name: 'map', texture: PIXI.Texture.from(
+  'assets/placeholders/maps/test_map.png') };
+  
+let map = new PIXI.Sprite(defaultMapImage.texture);
 
 export const createMap = (playArea: PIXI.Container) => {
   map.scale.set(1);
@@ -16,6 +18,7 @@ export const createMap = (playArea: PIXI.Container) => {
 
   map.zIndex = 0;
 
+  map.name = defaultMapImage.name;
   playArea.addChild(map);
 
   client.addEventListener('message', (event) => {
@@ -51,4 +54,9 @@ export const drawLine = (playArea: PIXI.Container) => {
   myLine.position.y = 50;
 
   playArea.addChild(myLine);
+}
+
+//currently just clearing all tokens
+export const resetTokens = () => {
+  clearAllTokens(playArea);
 }
