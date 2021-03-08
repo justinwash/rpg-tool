@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { AuthState } from '../../types/AuthState';
 
-export const AuthContext = React.createContext<{ authState: any; setAuthState: any }>({
-  authState: null,
+export const AuthContext = React.createContext<{ authState: AuthState; setAuthState: any }>({
+  authState: {} as AuthState,
   setAuthState: Function,
 });
 
 const AuthProvider = (props: any) => {
-  const [authState, setAuthState] = useState<Record<string, any>>({});
+  const [authState, setAuthState] = useState<AuthState>({} as AuthState);
 
   useEffect(() => {
     console.log('auth state changed: ', authState);

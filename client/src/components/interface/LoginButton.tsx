@@ -1,22 +1,25 @@
 import React, { useContext, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthProvider';
+import client from '../../client';
+import { AuthState } from '../../types/AuthState';
 
 const LoginButton = () => {
   const auth = useContext(AuthContext);
 
-  const onSuccess = (googleUser: any) => {
-    auth.setAuthState(googleUser);
-  };
-
-  const onFailure = (error: any) => {
-    auth.setAuthState(error);
-    console.log(error);
-  };
-
   useEffect(() => {
+    const onSuccess = (authData: any) => {
+      let profile = authData.getBasicProfile();
+      console.log(profile.getId());
+      auth.setAuthState({ googleUser: profile } as AuthState);
+    };
+
+    const onFailure = (error: any) => {
+      auth.setAuthState({ error } as AuthState);
+      console.log(error);
+    };
+
     // @ts-expect-error
     const { gapi } = window;
-    if (!gapi) return;
 
     gapi.load('auth2', () => {
       gapi.auth2.init({
@@ -28,6 +31,7 @@ const LoginButton = () => {
         onfailure: (error: any) => onFailure(error),
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signOut = () => {
@@ -42,9 +46,14 @@ const LoginButton = () => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        position: 'fixed',
+        right: '10px',
+      }}
+    >
       <div id='signin-button'></div>
-      {auth.authState.Ca && <button onClick={signOut}>Sign Out</button>}
+      {auth.authState.googleUser && <button onClick={signOut}>Sign Out</button>}
     </div>
   );
 };
