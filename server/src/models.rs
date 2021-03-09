@@ -16,7 +16,7 @@ pub struct NewImage<'a> {
 
 use super::schema::user;
 
-#[derive(Queryable, Debug)]
+#[derive(Queryable, Debug, Clone)]
 pub struct User {
   pub id: i32,
   pub google_id: String,
@@ -28,7 +28,7 @@ pub struct User {
   pub username: Option<String>,
 }
 
-#[derive(Insertable, Debug, Deserialize, Serialize)]
+#[derive(Insertable, Debug, Deserialize, Serialize, Clone)]
 #[table_name = "user"]
 pub struct NewUser {
   pub google_id: String,
