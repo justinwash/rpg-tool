@@ -1,14 +1,14 @@
-pub use self::client::*;
-pub use self::group::*;
-pub use self::map::*;
-pub use self::roll::*;
-pub use self::token::*;
+mod client;
+mod group;
+mod map;
+mod roll;
+mod token;
 
-pub mod client;
-pub mod group;
-pub mod map;
-pub mod roll;
-pub mod token;
+pub use client::*;
+pub use group::*;
+pub use map::*;
+pub use roll::*;
+pub use token::*;
 
 use serde_json::*;
 
