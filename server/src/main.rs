@@ -31,6 +31,7 @@ async fn main() {
   let hello = warp::path!("hello" / String)
     .map(|name| format!("Hello, {} from the http server!", name))
     .with(warp::cors().allow_any_origin());
+
   let add_user = warp::post()
     .and(warp::path("user"))
     .and(warp::path::end())
@@ -39,27 +40,23 @@ async fn main() {
       let db = get_db_connection();
       let new_user = create_user(&db, &user);
       format!("got add_user request and created user: {:?}", new_user)
-    });
+    })
+    .with(
+      warp::cors()
+        .allow_any_origin()
+        .allow_headers(vec![
+          "User-Agent",
+          "Sec-Fetch-Mode",
+          "Referer",
+          "Origin",
+          "Access-Control-Request-Method",
+          "Access-Control-Request-Headers",
+          "content-type",
+        ])
+        .allow_methods(vec!["POST"]),
+    );
 
-  let warp = warp::serve(
-    hello.or(
-      add_user.with(
-        warp::cors()
-          .allow_any_origin()
-          .allow_headers(vec![
-            "User-Agent",
-            "Sec-Fetch-Mode",
-            "Referer",
-            "Origin",
-            "Access-Control-Request-Method",
-            "Access-Control-Request-Headers",
-            "content-type",
-          ])
-          .allow_methods(vec!["POST"]),
-      ),
-    ),
-  )
-  .run(([127, 0, 0, 1], 9002));
+  let warp = warp::serve(hello.or(add_user)).run(([127, 0, 0, 1], 9002));
 
   let runtime = tokio::runtime::Runtime::new().unwrap();
 

@@ -1,7 +1,6 @@
 extern crate diesel;
 extern crate dotenv;
 
-use crate::schema::image::dsl::*;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -18,6 +17,7 @@ use crate::models::{Image, NewImage};
 
 pub fn create_image<'a>(db: &PgConnection, image_url: &'a str) -> Image {
   use super::schema::image;
+  use crate::schema::image::dsl::*;
 
   let new_image = NewImage { url: image_url };
 
@@ -35,13 +35,15 @@ use crate::models::{NewUser, User};
 
 pub fn create_user<'a>(db: &PgConnection, new_user: &NewUser) -> User {
   use super::schema::user;
+  use crate::schema::user::dsl::*;
 
+  let new_google_id = String::from(&new_user.google_id);
   let res = diesel::insert_into(user::table)
     .values(new_user)
     .get_result(db);
 
   match res {
     Ok(i) => i,
-    _ => panic!("broke"),
+    _ => user.filter(google_id.eq(new_google_id)).first(db).unwrap(),
   }
 }
