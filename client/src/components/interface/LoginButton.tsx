@@ -1,15 +1,34 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthProvider';
-import client from '../../client';
 import { AuthState } from '../../types/AuthState';
+import http from '../../http';
+import { CLIENT_ID, API_URL } from '../../environment';
 
 const LoginButton = () => {
   const auth = useContext(AuthContext);
+  const [rerender, setRerender] = useState(true);
 
   useEffect(() => {
     const onSuccess = (authData: any) => {
       let profile = authData.getBasicProfile();
-      console.log(profile.getId());
+
+      //testing
+      if (API_URL)
+        http
+          .post(`${API_URL}/user`, {
+            google_id: profile.getId(),
+            first_name: profile.getGivenName(),
+            last_name: profile.getFamilyName(),
+            image: profile.getImageUrl(),
+            email: profile.getEmail(),
+          })
+          .then((res) => {
+            if (res?.data) {
+              console.log(res.data);
+            }
+          })
+          .catch((err) => console.log(err));
+
       auth.setAuthState({ googleUser: profile } as AuthState);
     };
 
@@ -21,9 +40,14 @@ const LoginButton = () => {
     // @ts-expect-error
     const { gapi } = window;
 
+    if (!gapi) {
+      setRerender(!rerender);
+      return;
+    }
+
     gapi.load('auth2', () => {
       gapi.auth2.init({
-        client_id: process.env.CLIENT_ID,
+        client_id: CLIENT_ID,
       });
 
       gapi.signin2.render('signin-button', {
@@ -32,7 +56,7 @@ const LoginButton = () => {
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rerender, setRerender]);
 
   const signOut = () => {
     // @ts-expect-error
