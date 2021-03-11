@@ -50,14 +50,7 @@ pub fn setup() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejectio
     .and(warp::path("session"))
     .and(warp::path::end())
     .and(session_request())
-    .map(|session_request: SessionRequest| {
-      // let db = get_db_connection();
-      // let new_user = create_user(&db, &user);
-      format!(
-        "got add_user request and created user: {:?}",
-        session_request
-      )
-    })
+    .map(|session_request: SessionRequest| format!("got session request: {:?}", session_request))
     .with(
       warp::cors()
         .allow_any_origin()
