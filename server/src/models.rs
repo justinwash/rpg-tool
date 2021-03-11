@@ -1,5 +1,6 @@
 mod image;
+mod session;
 mod user;
 
 pub use image::*;
-pub use user::*;
+pub use session::*;pub use user::*;
