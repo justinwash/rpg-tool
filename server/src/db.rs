@@ -1,7 +1,9 @@
 mod image;
+pub mod session;
 mod user;
 
 pub use image::*;
+pub use session::*;
 pub use user::*;
 
 extern crate diesel;
