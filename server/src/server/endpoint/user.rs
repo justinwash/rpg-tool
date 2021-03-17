@@ -3,15 +3,16 @@ use crate::models::request::*;
 use crate::models::user::NewUser;
 use warp::Filter;
 
-pub fn add_user() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-  warp::post()
+pub fn create_user() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+  warp::put()
     .and(warp::path("user"))
     .and(warp::path::end())
-    .and(add_user_request())
+    .and(create_user_request())
     .map(|user: NewUser| {
       let db = get_db_connection();
-      let new_user = create_user(&db, &user);
-      format!("got add_user request and created user: {:?}", new_user)
+      let new_user = crate::db::create_user(&db, &user);
+      println!("got create_user request and created user: {:?}", new_user);
+      warp::reply::json(&new_user)
     })
     .with(
       warp::cors()
@@ -25,6 +26,6 @@ pub fn add_user() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejec
           "Access-Control-Request-Headers",
           "content-type",
         ])
-        .allow_methods(vec!["POST"]),
+        .allow_methods(vec!["PUT"]),
     )
 }
