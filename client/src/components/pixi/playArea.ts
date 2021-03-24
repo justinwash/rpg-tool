@@ -14,7 +14,7 @@ app.ticker.add((delta) => {
 export const playArea = new PIXI.Container();
 playArea.sortableChildren = true;
 
-const viewport = new Viewport({
+export const justanosViewport = new Viewport({
   screenWidth: window.innerWidth,
   screenHeight: window.innerHeight,
   worldWidth: 1000,
@@ -23,13 +23,13 @@ const viewport = new Viewport({
   interaction: app.renderer.plugins.interaction,
 });
 
-viewport.addChild(playArea);
+justanosViewport.addChild(playArea);
 
-viewport.drag().pinch().wheel().decelerate({
+justanosViewport.drag().pinch().wheel().decelerate({
   friction: 0.75,
 });
 
-app.stage.addChild(viewport);
+app.stage.addChild(justanosViewport);
 
 document.body.appendChild(app.view);
 
@@ -37,7 +37,7 @@ createMap(playArea);
 createCharacterTokens(playArea);
 
 export const setIsMapDraggable = (draggable: boolean) => {
-  draggable ? viewport.plugins.resume('drag') : viewport.plugins.pause('drag');
+  draggable ? justanosViewport.plugins.resume('drag') : justanosViewport.plugins.pause('drag');
 }
 
 export default app;

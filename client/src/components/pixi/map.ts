@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js-legacy';
 import socket from '../../socket';
 import { cleanJsonString } from '../../utilities/json';
 import { clearAllTokens } from './tokens';
-import { playArea } from './playArea';
+import { playArea, justanosViewport } from './playArea';
 
 const defaultMapImage = { name: 'map', texture: PIXI.Texture.from('assets/placeholders/maps/test_map.png') };
 
@@ -70,18 +70,18 @@ const mutateMouseFromEvent = (mouse: { x: number, y: number }, event: any) => {
 export const doodle = () => {
 
   // var renderer = PIXI.autoDetectRenderer({ antialias: true, width: 1000, height: 1000 });
-  let renderer = PIXI.autoDetectRenderer({ antialias: true, width: playArea.width, height: playArea.height });
+  // let renderer = PIXI.autoDetectRenderer({ antialias: true, width: playArea.width, height: playArea.height });
   // document.body.appendChild(renderer.view);
 
   // for debugging ease
-  let localPlay = playArea;
+  // let localPlay = playArea;
 
-  const animate = () => {
-    requestAnimationFrame(animate);
-    renderer.render(playArea);
-  }
+  // const animate = () => {
+  //   requestAnimationFrame(animate);
+  //   // renderer.render(playArea);
+  // }
 
-  requestAnimationFrame(animate);
+  // requestAnimationFrame(animate);
 
   let line = new PIXI.Graphics();
   line.lineStyle(5, 0xFFFFFF, 1);
@@ -95,7 +95,15 @@ export const doodle = () => {
   window.addEventListener('mousedown', (e: any) => {
 
     window.addEventListener('mousemove', onPaint, false);
+    let localPlay = playArea;
+    let localViewPort = justanosViewport;
     mutateMouseFromEvent(mouse, e);
+
+    let viewportMouse = (localViewPort.plugins as any).viewport.options.interaction.mouse.global;
+
+    console.log(`My mouse -> x: ${mouse.x} y: ${mouse.y}`);
+    console.log(`Viewport -> x: ${viewportMouse.x} y: ${viewportMouse.y}`);
+
     points.push({ x: mouse.x, y: mouse.y });
     onPaint();
 
