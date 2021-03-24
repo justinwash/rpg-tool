@@ -58,3 +58,119 @@ export const drawLine = (playArea: PIXI.Container) => {
 export const resetTokens = () => {
   clearAllTokens(playArea);
 };
+
+const mutateMouseFromEvent = (mouse: { x: number, y: number }, event: any) => {
+
+  if (mouse && event) {
+    mouse.x = typeof event.offsetX !== 'undefined' ? event.offsetX : event.layerX;
+    mouse.y = typeof event.offsetY !== 'undefined' ? event.offsetY : event.layerY;
+  }
+}
+
+export const doodle = () => {
+
+  // var renderer = PIXI.autoDetectRenderer({ antialias: true, width: 1000, height: 1000 });
+  let renderer = PIXI.autoDetectRenderer({ antialias: true, width: playArea.width, height: playArea.height });
+  // document.body.appendChild(renderer.view);
+
+  // for debugging ease
+  let localPlay = playArea;
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+    renderer.render(playArea);
+  }
+
+  requestAnimationFrame(animate);
+
+  let line = new PIXI.Graphics();
+  line.lineStyle(5, 0xFFFFFF, 1);
+  playArea.addChild(line);
+
+  let points: any = [];
+  let mouse: any = { x: 0, y: 0 };
+
+  window.addEventListener('mousemove', (e: any) => mutateMouseFromEvent(mouse, e), false);
+
+  window.addEventListener('mousedown', (e: any) => {
+
+    window.addEventListener('mousemove', onPaint, false);
+    mutateMouseFromEvent(mouse, e);
+    points.push({ x: mouse.x, y: mouse.y });
+    onPaint();
+
+  }, false);
+
+  window.addEventListener('mouseup', function () {
+
+    window.removeEventListener('mousemove', onPaint, false);
+    onPaint();
+    previousDoodle = null;
+    // remove points 
+    points = [];
+  }, false);
+
+  // Handle Touch Events
+  window.addEventListener('touchmove', function (e) {
+
+    e.preventDefault();
+    mouse.x = e.changedTouches[0].pageX;
+    mouse.y = e.changedTouches[0].pageY;
+
+  }, false);
+
+  window.addEventListener('touchstart', function (e) {
+
+    e.preventDefault();
+    mouse.x = e.changedTouches[0].pageX;
+    mouse.y = e.changedTouches[0].pageY;
+    window.addEventListener('touchmove', onPaint, false);
+
+  }, false);
+
+  window.addEventListener('touchend', function () {
+
+    window.removeEventListener('touchmove', onPaint, false);
+    onPaint();
+    previousDoodle = null;
+    points = [];
+
+  }, false);
+
+  let previousDoodle: any = null;
+
+  const onPaint = () => {
+    if (previousDoodle !== null) {
+      playArea.removeChild(previousDoodle);
+    }
+    points.push({ x: mouse.x, y: mouse.y });
+
+    let currentDoodle = new PIXI.Graphics();
+    currentDoodle.lineStyle(4, 0x000000, 1);
+    currentDoodle.moveTo(points[0].x, points[0].y);
+
+    for (var i = 1; i < points.length - 2; i++) {
+      const xMidPoint = (points[i].x + points[i + 1].x) / 2;
+      const yMidPoint = (points[i].y + points[i + 1].y) / 2;
+
+      currentDoodle.quadraticCurveTo(points[i].x, points[i].y, xMidPoint, yMidPoint);
+    }
+
+    try {
+
+      currentDoodle.quadraticCurveTo(
+        points[i - 1].x,
+        points[i - 1].y,
+        points[i].x,
+        points[i].y
+      );
+
+      playArea.addChild(currentDoodle);
+      previousDoodle = currentDoodle;
+
+    } catch(error) {
+
+      console.log(`failed to draw: ${error}`);
+    }
+  }
+}

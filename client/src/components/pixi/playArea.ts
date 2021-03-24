@@ -6,6 +6,7 @@ import { createMap } from './map';
 
 const app = new PIXI.Application({ backgroundColor: 0x1099bb });
 
+
 app.ticker.add((delta) => {
   TWEEN.update();
 });
@@ -34,5 +35,9 @@ document.body.appendChild(app.view);
 
 createMap(playArea);
 createCharacterTokens(playArea);
+
+export const setIsMapDraggable = (draggable: boolean) => {
+  draggable ? viewport.plugins.resume('drag') : viewport.plugins.pause('drag');
+}
 
 export default app;

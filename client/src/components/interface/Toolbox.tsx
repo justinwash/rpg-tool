@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { drawLine, resetTokens } from '../pixi/map';
-import { playArea } from '../pixi/playArea';
+import { doodle, drawLine, resetTokens } from '../pixi/map';
+import { playArea, setIsMapDraggable } from '../pixi/playArea';
 import { createCharacterTokens } from '../pixi/tokens';
 
 export const Toolbox = (props: { sidebarWidth: number }) => {
@@ -35,7 +35,7 @@ export const Toolbox = (props: { sidebarWidth: number }) => {
       >
         {createToolboxButton(DRAW_BUTTON, '', handleDrawButtonClick(pressedButton === DRAW_BUTTON), pressedButton, setPressedButton)}
 
-        {createToolboxButton(ARROW_BUTTON, '', () => {}, pressedButton, setPressedButton)}
+        {createToolboxButton(ARROW_BUTTON, '', () => { }, pressedButton, setPressedButton)}
 
         {createToolboxButton(RESET_BUTTON, '', handleResetButtonClick(), pressedButton, setPressedButton)}
         {/* These two buttons (reset and add) don't look like they're being pressed. Shadow doesn't come back until clicking again. */}
@@ -74,8 +74,13 @@ const createToolboxButton = (buttonName: string, image: string, onClick: () => a
 const handleDrawButtonClick = (previouslyActive: boolean) => () => {
   console.log(`Button is now ${!previouslyActive ? 'active' : 'inactive'}`);
 
+
   if (!previouslyActive) {
-    drawLine(playArea);
+    // drawLine(playArea);
+    setIsMapDraggable(false);
+    doodle();
+  } else {
+    setIsMapDraggable(true);
   }
 };
 
