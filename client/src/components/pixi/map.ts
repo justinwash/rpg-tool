@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js-legacy';
 import socket from '../../socket';
 import { cleanJsonString } from '../../utilities/json';
 import { clearAllTokens } from './tokens';
-import { playArea } from './playArea';
+import { playArea, viewport } from './playArea';
 
 const defaultMapImage = { name: 'map', texture: PIXI.Texture.from('assets/placeholders/maps/test_map.png') };
 
@@ -59,83 +59,73 @@ export const resetTokens = () => {
   clearAllTokens(playArea);
 };
 
-const mutateMouseFromEvent = (mouse: { x: number, y: number }, event: any) => {
-
-  if (mouse && event) {
-    mouse.x = typeof event.offsetX !== 'undefined' ? event.offsetX : event.layerX;
-    mouse.y = typeof event.offsetY !== 'undefined' ? event.offsetY : event.layerY;
-  }
-}
-
 export const doodle = () => {
-
-  // var renderer = PIXI.autoDetectRenderer({ antialias: true, width: 1000, height: 1000 });
-  let renderer = PIXI.autoDetectRenderer({ antialias: true, width: playArea.width, height: playArea.height });
-  // document.body.appendChild(renderer.view);
-
-  // for debugging ease
-  let localPlay = playArea;
-
-  const animate = () => {
-    requestAnimationFrame(animate);
-    renderer.render(playArea);
-  }
-
-  requestAnimationFrame(animate);
-
   let line = new PIXI.Graphics();
-  line.lineStyle(5, 0xFFFFFF, 1);
+  line.lineStyle(5, 0xffffff, 1);
   playArea.addChild(line);
 
   let points: any = [];
   let mouse: any = { x: 0, y: 0 };
 
-  window.addEventListener('mousemove', (e: any) => mutateMouseFromEvent(mouse, e), false);
+  viewport.on('mousemove', (e) => {
+    mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+  });
 
-  window.addEventListener('mousedown', (e: any) => {
+  viewport.on(
+    'mousedown',
+    (e: any) => {
+      viewport.on('mousemove', onPaint, false);
+      points.push({ x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y });
+      mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+      onPaint();
+    },
+    false
+  );
 
-    window.addEventListener('mousemove', onPaint, false);
-    mutateMouseFromEvent(mouse, e);
-    points.push({ x: mouse.x, y: mouse.y });
-    onPaint();
+  viewport.on(
+    'mouseup',
+    function () {
+      viewport.off('mousemove');
+      viewport.on('mousemove', (e) => {
+        mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+      });
+      onPaint();
+      previousDoodle = null;
+      // remove points
+      points = [];
+    },
+    false
+  );
 
-  }, false);
+  viewport.on('touchmove', (e) => {
+    mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+  });
 
-  window.addEventListener('mouseup', function () {
+  viewport.on(
+    'touchstart',
+    (e: any) => {
+      viewport.on('touchmove', onPaint, false);
+      points.push({ x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y });
+      mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+      onPaint();
+    },
+    false
+  );
 
-    window.removeEventListener('mousemove', onPaint, false);
-    onPaint();
-    previousDoodle = null;
-    // remove points 
-    points = [];
-  }, false);
-
-  // Handle Touch Events
-  window.addEventListener('touchmove', function (e) {
-
-    e.preventDefault();
-    mouse.x = e.changedTouches[0].pageX;
-    mouse.y = e.changedTouches[0].pageY;
-
-  }, false);
-
-  window.addEventListener('touchstart', function (e) {
-
-    e.preventDefault();
-    mouse.x = e.changedTouches[0].pageX;
-    mouse.y = e.changedTouches[0].pageY;
-    window.addEventListener('touchmove', onPaint, false);
-
-  }, false);
-
-  window.addEventListener('touchend', function () {
-
-    window.removeEventListener('touchmove', onPaint, false);
-    onPaint();
-    previousDoodle = null;
-    points = [];
-
-  }, false);
+  viewport.on(
+    'touchend',
+    function () {
+      viewport.off('touchmove');
+      viewport.on('touchmove', (e) => {
+        mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+      });
+      onPaint();
+      previousDoodle = null;
+      // remove points
+      points = [];
+    },
+    false
+  );
 
   let previousDoodle: any = null;
 
@@ -157,20 +147,12 @@ export const doodle = () => {
     }
 
     try {
-
-      currentDoodle.quadraticCurveTo(
-        points[i - 1].x,
-        points[i - 1].y,
-        points[i].x,
-        points[i].y
-      );
+      currentDoodle.quadraticCurveTo(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
 
       playArea.addChild(currentDoodle);
       previousDoodle = currentDoodle;
-
-    } catch(error) {
-
+    } catch (error) {
       console.log(`failed to draw: ${error}`);
     }
-  }
-}
+  };
+};
