@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js-legacy';
 import socket from '../../socket';
 import { cleanJsonString } from '../../utilities/json';
 import { clearAllTokens } from './tokens';
-import { playArea } from './playArea';
+import { playArea, viewport } from './playArea';
 
 const defaultMapImage = { name: 'map', texture: PIXI.Texture.from('assets/placeholders/maps/test_map.png') };
 
@@ -57,4 +57,113 @@ export const drawLine = (playArea: PIXI.Container) => {
 //currently just clearing all tokens
 export const resetTokens = () => {
   clearAllTokens(playArea);
+};
+
+export const disableDoodling = () => {
+  viewport.off('mousemove');
+  viewport.off('mousedown');
+  viewport.off('mouseup');
+  viewport.off('touchstart');
+  viewport.off('touchmove');
+  viewport.off('touchend');
+}
+
+const getCoordinateFromEvent = (event: PIXI.InteractionEvent) => event?.data?.getLocalPosition(viewport);
+
+export const enableDoodling = () => {
+  let line = new PIXI.Graphics();
+  line.lineStyle(5, 0xffffff, 1);
+  playArea.addChild(line);
+
+  let points: any = [];
+  let mouse: any = { x: 0, y: 0 };
+
+  viewport.on('mousemove', (e) => {
+    mouse = getCoordinateFromEvent(e);
+  });
+
+  viewport.on(
+    'mousedown',
+    (e: any) => {
+      viewport.on('mousemove', renderLine, false);
+      points.push(getCoordinateFromEvent(e));
+      mouse = getCoordinateFromEvent(e);
+      renderLine();
+    },
+    false
+  );
+
+  viewport.on(
+    'mouseup',
+    function () {
+      viewport.off('mousemove');
+      viewport.on('mousemove', (e) => {
+        mouse = getCoordinateFromEvent(e);
+      });
+      renderLine();
+      previousDoodle = null;
+      // remove points
+      points = [];
+    },
+    false
+  );
+
+  viewport.on('touchmove', (e) => {
+    mouse = getCoordinateFromEvent(e);
+  });
+
+  viewport.on(
+    'touchstart',
+    (e: any) => {
+      viewport.on('touchmove', renderLine, false);
+      points.push(getCoordinateFromEvent(e));
+      mouse = getCoordinateFromEvent(e);
+      renderLine();
+    },
+    false
+  );
+
+  viewport.on(
+    'touchend',
+    function () {
+      viewport.off('touchmove');
+      viewport.on('touchmove', (e) => {
+        mouse = getCoordinateFromEvent(e);
+      });
+      renderLine();
+      previousDoodle = null;
+      // remove points
+      points = [];
+    },
+    false
+  );
+
+  let previousDoodle: any = null;
+
+  const renderLine = () => {
+    if (previousDoodle !== null) {
+      playArea.removeChild(previousDoodle);
+    }
+    points.push({ x: mouse.x, y: mouse.y });
+
+    let currentDoodle = new PIXI.Graphics();
+    currentDoodle.lineStyle(4, 0x000000, 1);
+    currentDoodle.moveTo(points[0].x, points[0].y);
+
+    for (var i = 1; i < points.length - 2; i++) {
+      const xMidPoint = (points[i].x + points[i + 1].x) / 2;
+      const yMidPoint = (points[i].y + points[i + 1].y) / 2;
+
+      currentDoodle.quadraticCurveTo(points[i].x, points[i].y, xMidPoint, yMidPoint);
+    }
+
+    try {
+      currentDoodle.quadraticCurveTo(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
+
+      playArea.addChild(currentDoodle);
+      previousDoodle = currentDoodle;
+    } catch (error) {
+      console.log(`failed to draw: ${error}`);
+    }
+  };
 };

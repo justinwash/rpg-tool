@@ -11,14 +11,14 @@ app.ticker.add((delta) => {
 });
 
 export const playArea = new PIXI.Container();
+playArea.interactive = true;
 playArea.sortableChildren = true;
 
-const viewport = new Viewport({
+export const viewport = new Viewport({
   screenWidth: window.innerWidth,
   screenHeight: window.innerHeight,
   worldWidth: 1000,
   worldHeight: 1000,
-
   interaction: app.renderer.plugins.interaction,
 });
 
@@ -34,5 +34,9 @@ document.body.appendChild(app.view);
 
 createMap(playArea);
 createCharacterTokens(playArea);
+
+export const setIsMapDraggable = (draggable: boolean) => {
+  draggable ? viewport.plugins.resume('drag') : viewport.plugins.pause('drag');
+};
 
 export default app;
