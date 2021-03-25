@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthProvider';
 import LoginButton from './LoginButton';
+import { NavLink } from "react-router-dom";
 
 const OuterSidebar = (props: { width: number }) => {
   const auth = useContext(AuthContext);
@@ -18,7 +19,8 @@ const OuterSidebar = (props: { width: number }) => {
       }}
     >
       <LoginButton />
-
+      <NavLink to="/link"><img style={{ maxWidth: '75%' }} src="https://cdn.discordapp.com/emojis/804837948024422440.png" alt="Home" /></NavLink>
+            
       {auth.authState.googleUser && <img style={{ width: '80%' }} alt='user-icon' src={auth.authState.googleUser.getImageUrl()} />}
     </div>
   );
