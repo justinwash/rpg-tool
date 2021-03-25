@@ -1,10 +1,12 @@
 import React, { createRef, useEffect } from 'react';
 import playArea from '../pixi/playArea';
 import useWindowDimensions from '../../utilities/window';
+import {Switch, Route } from 'react-router';
 
 import OuterSidebar from '../interface/OuterSidebar';
 import InnerSidebar from '../interface/InnerSidebar';
 import Toolbox from '../interface/Toolbox';
+import TestLink from '../interface/TestLink';
 
 const PlayPage = (props: {}) => {
   const canvasRef = createRef<HTMLDivElement>();
@@ -28,6 +30,11 @@ const PlayPage = (props: {}) => {
 
   return (
     <div style={{ width: '100vw' }} className='Play'>
+      <Switch>
+          <Route path='/link'>
+            <TestLink />
+          </Route>
+      </Switch>
       <OuterSidebar width={outerSidebarWidth} />
       <InnerSidebar width={innerSidebarWidth} />
       <Toolbox sidebarWidth={innerSidebarWidth + outerSidebarWidth} />
