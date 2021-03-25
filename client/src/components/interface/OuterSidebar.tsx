@@ -19,7 +19,7 @@ const OuterSidebar = (props: { width: number }) => {
       }}
     >
       <LoginButton />
-      <NavLink to="/link"><img src="../../../public/logo192.png" alt="Home" /></NavLink>
+      <NavLink to="/link"><img style={{ maxWidth: '75%' }} src="https://cdn.discordapp.com/emojis/804837948024422440.png" alt="Home" /></NavLink>
             
       {auth.authState.googleUser && <img style={{ width: '80%' }} alt='user-icon' src={auth.authState.googleUser.getImageUrl()} />}
     </div>
