@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { doodle, drawLine, resetTokens } from '../pixi/map';
+import { enableDoodling, drawLine, resetTokens, disableDoodling } from '../pixi/map';
 import { playArea, setIsMapDraggable } from '../pixi/playArea';
 import { createCharacterTokens } from '../pixi/tokens';
 
@@ -78,8 +78,9 @@ const handleDrawButtonClick = (previouslyActive: boolean) => () => {
   if (!previouslyActive) {
     // drawLine(playArea);
     setIsMapDraggable(false);
-    doodle();
+    enableDoodling();
   } else {
+    disableDoodling();
     setIsMapDraggable(true);
   }
 };

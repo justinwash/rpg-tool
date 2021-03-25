@@ -59,7 +59,18 @@ export const resetTokens = () => {
   clearAllTokens(playArea);
 };
 
-export const doodle = () => {
+export const disableDoodling = () => {
+  viewport.off('mousemove');
+  viewport.off('mousedown');
+  viewport.off('mouseup');
+  viewport.off('touchstart');
+  viewport.off('touchmove');
+  viewport.off('touchend');
+}
+
+const getCoordinateFromEvent = (event: PIXI.InteractionEvent) => event?.data?.getLocalPosition(viewport);
+
+export const enableDoodling = () => {
   let line = new PIXI.Graphics();
   line.lineStyle(5, 0xffffff, 1);
   playArea.addChild(line);
@@ -68,16 +79,16 @@ export const doodle = () => {
   let mouse: any = { x: 0, y: 0 };
 
   viewport.on('mousemove', (e) => {
-    mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+    mouse = getCoordinateFromEvent(e);
   });
 
   viewport.on(
     'mousedown',
     (e: any) => {
-      viewport.on('mousemove', onPaint, false);
-      points.push({ x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y });
-      mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
-      onPaint();
+      viewport.on('mousemove', renderLine, false);
+      points.push(getCoordinateFromEvent(e));
+      mouse = getCoordinateFromEvent(e);
+      renderLine();
     },
     false
   );
@@ -87,9 +98,9 @@ export const doodle = () => {
     function () {
       viewport.off('mousemove');
       viewport.on('mousemove', (e) => {
-        mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+        mouse = getCoordinateFromEvent(e);
       });
-      onPaint();
+      renderLine();
       previousDoodle = null;
       // remove points
       points = [];
@@ -98,16 +109,16 @@ export const doodle = () => {
   );
 
   viewport.on('touchmove', (e) => {
-    mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+    mouse = getCoordinateFromEvent(e);
   });
 
   viewport.on(
     'touchstart',
     (e: any) => {
-      viewport.on('touchmove', onPaint, false);
-      points.push({ x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y });
-      mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
-      onPaint();
+      viewport.on('touchmove', renderLine, false);
+      points.push(getCoordinateFromEvent(e));
+      mouse = getCoordinateFromEvent(e);
+      renderLine();
     },
     false
   );
@@ -117,9 +128,9 @@ export const doodle = () => {
     function () {
       viewport.off('touchmove');
       viewport.on('touchmove', (e) => {
-        mouse = { x: e.data.getLocalPosition(viewport).x, y: e.data.getLocalPosition(viewport).y };
+        mouse = getCoordinateFromEvent(e);
       });
-      onPaint();
+      renderLine();
       previousDoodle = null;
       // remove points
       points = [];
@@ -129,7 +140,7 @@ export const doodle = () => {
 
   let previousDoodle: any = null;
 
-  const onPaint = () => {
+  const renderLine = () => {
     if (previousDoodle !== null) {
       playArea.removeChild(previousDoodle);
     }
