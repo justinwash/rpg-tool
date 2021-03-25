@@ -2,7 +2,7 @@ use crate::schema::session;
 use serde::{Deserialize, Serialize};
 use uuid::*;
 
-#[derive(Queryable, Debug, Clone)]
+#[derive(Queryable, Debug, Deserialize, Serialize, Clone)]
 pub struct Session {
   pub id: i32,
   uuid: Uuid,
