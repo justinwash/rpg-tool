@@ -15,7 +15,7 @@ const LoginButton = () => {
       //testing
       if (API_URL)
         http
-          .put(`${API_URL}/user`, {
+          .post(`${API_URL}/user`, {
             google_id: profile.getId(),
             first_name: profile.getGivenName(),
             last_name: profile.getFamilyName(),
