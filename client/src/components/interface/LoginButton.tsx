@@ -73,6 +73,7 @@ const LoginButton = () => {
     <div
       style={{
         position: 'fixed',
+        top: '10px',
         right: '10px',
       }}
     >
