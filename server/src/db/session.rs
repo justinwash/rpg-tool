@@ -29,6 +29,18 @@ pub fn create_session<'a>(db: &PgConnection, user_id: i32) -> Result<Session, wa
   }
 }
 
+pub fn get_user_sessions<'a>(
+  db: &PgConnection,
+  user_id: i32,
+) -> Result<Vec<Session>, warp::Rejection> {
+  let res = session.filter(dm.eq(user_id as i64)).load(db);
+
+  match res {
+    Ok(i) => Ok(i),
+    _ => Err(warp::reject()),
+  }
+}
+
 pub fn get_session<'a>(db: &PgConnection, session_uuid: Uuid) -> Result<Session, warp::Rejection> {
   let res = session.filter(uuid.eq(session_uuid)).first(db);
 

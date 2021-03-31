@@ -18,6 +18,21 @@ pub fn create_session() -> impl Filter<Extract = impl warp::Reply, Error = warp:
     .with(warp::cors().allow_any_origin().allow_methods(vec!["PUT"]))
 }
 
+pub fn get_user_sessions(
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+  warp::path!("session")
+    .and(warp::path::end())
+    .and(get_user_sessions_request())
+    .map(|get_user_sessions_request: GetUserSessionsRequest| {
+      let db = get_db_connection();
+      let user_sessions =
+        crate::db::session::get_user_sessions(&db, get_user_sessions_request.user_id as i32);
+      println!("got get_user_sessions. Result: {:?}", user_sessions);
+      warp::reply::json(&user_sessions.unwrap())
+    })
+    .with(warp::cors().allow_any_origin().allow_methods(vec!["GET"]))
+}
+
 pub fn get_session() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
   warp::path!("session" / Uuid)
     .map(|session_uuid| {
@@ -28,23 +43,3 @@ pub fn get_session() -> impl Filter<Extract = impl warp::Reply, Error = warp::Re
     })
     .with(warp::cors().allow_any_origin().allow_methods(vec!["GET"]))
 }
-
-// let get_session = warp::post()
-// .and(warp::path("session"))
-// .and(warp::path::end())
-// .and(session_request())
-// .map(|session_request: SessionRequest| format!("got session request: {:?}", session_request))
-// .with(
-//   warp::cors()
-//     .allow_any_origin()
-//     .allow_headers(vec![
-//       "User-Agent",
-//       "Sec-Fetch-Mode",
-//       "Referer",
-//       "Origin",
-//       "Access-Control-Request-Method",
-//       "Access-Control-Request-Headers",
-//       "content-type",
-//     ])
-//     .allow_methods(vec!["GET"]),
-// );
