@@ -1,5 +1,6 @@
 import React from 'react';
 import react, { useContext, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 import { API_URL } from '../../environment';
 import http from '../../http';
 import { AuthContext } from '../contexts/AuthProvider';
@@ -21,18 +22,27 @@ const RegistrationPage = (props: {}) => {
         })
         .then((res) => {
           if (res?.data) {
-            console.log(res.data);
+            auth.setAuthState({
+              ...auth.authState,
+              rpgToolUser: res.data,
+            });
           }
         })
         .catch((err) => console.log(err));
     }
   };
 
+  if (auth.authState.rpgToolUser?.username) {
+    return <Redirect to='/play' />;
+  }
+
   return (
     <div>
       <h2>pls choose a username</h2>
       <input placeholder='username' value={username} onChange={(event) => setUsername(event.target.value)} />
+      <br />
       {error}
+      <br />
       <button onClick={() => submitUsername(username)}>Register</button>
     </div>
   );
