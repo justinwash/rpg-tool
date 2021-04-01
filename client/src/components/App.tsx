@@ -6,6 +6,7 @@ import AuthProvider from './contexts/AuthProvider';
 import PlayPage from './pages/PlayPage';
 import LandingPage from './pages/LandingPage';
 import NotFoundPage from './pages/NotFoundPage';
+import RegistrationPage from './pages/RegistrationPage';
 
 const history = createBrowserHistory();
 
@@ -20,6 +21,10 @@ const App = () => {
           <Route exact path='/play'>
             {/* eventually /play/:session-id */}
             <PlayPage />
+          </Route>
+          <Route exact path='/registration'>
+            {/* eventually /play/:session-id */}
+            <RegistrationPage />
           </Route>
           <Route>
             <NotFoundPage />

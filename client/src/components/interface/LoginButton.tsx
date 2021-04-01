@@ -3,6 +3,7 @@ import { AuthContext } from '../contexts/AuthProvider';
 import { AuthState } from '../../types/AuthState';
 import http from '../../http';
 import { CLIENT_ID, API_URL } from '../../environment';
+import { Link, Redirect } from 'react-router-dom';
 
 const LoginButton = () => {
   const auth = useContext(AuthContext);
@@ -11,7 +12,7 @@ const LoginButton = () => {
   useEffect(() => {
     const onSuccess = (authData: any) => {
       let profile = authData.getBasicProfile();
-
+      let res = {} as any;
       //testing
       if (API_URL)
         http
@@ -24,12 +25,10 @@ const LoginButton = () => {
           })
           .then((res) => {
             if (res?.data) {
-              console.log(res.data);
+              auth.setAuthState({ rpgToolUser: res.data, googleUser: profile } as AuthState);
             }
           })
           .catch((err) => console.log(err));
-
-      auth.setAuthState({ googleUser: profile } as AuthState);
     };
 
     const onFailure = (error: any) => {
@@ -70,14 +69,9 @@ const LoginButton = () => {
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: '10px',
-        right: '10px',
-      }}
-    >
+    <div>
       <div id='signin-button'></div>
+      <Link to='/registration'>register</Link>
       {auth.authState.googleUser && <button onClick={signOut}>Sign Out</button>}
     </div>
   );

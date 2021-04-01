@@ -15,68 +15,43 @@ export const Toolbox = (props: { sidebarWidth: number }) => {
       id='placeholder-toolbox'
       style={{
         width: '30vw',
-        height: '7.5vh',
         top: `1vh`,
+        padding: '0.666em',
         left: `${props.sidebarWidth + 25}px`,
         position: 'absolute',
         backgroundColor: '#fff8e7',
-        borderRadius: 15,
+        borderRadius: 8,
       }}
     >
-      <div
-        style={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          paddingLeft: 20,
-          justifyContent: 'left',
-          alignItems: 'center',
-        }}
-      >
-        {createToolboxButton(DRAW_BUTTON, '', handleDrawButtonClick(pressedButton === DRAW_BUTTON), pressedButton, setPressedButton)}
+      {createToolboxButton(DRAW_BUTTON, '', handleDrawButtonClick(pressedButton === DRAW_BUTTON), pressedButton, setPressedButton)}
 
-        {createToolboxButton(ARROW_BUTTON, '', () => { }, pressedButton, setPressedButton)}
+      {createToolboxButton(ARROW_BUTTON, '', () => {}, pressedButton, setPressedButton)}
 
-        {createToolboxButton(RESET_BUTTON, '', handleResetButtonClick(), pressedButton, setPressedButton)}
-        {/* These two buttons (reset and add) don't look like they're being pressed. Shadow doesn't come back until clicking again. */}
-        {createToolboxButton(ADD_BUTTON, '', handleAddButtonClick(), pressedButton, setPressedButton)}
-      </div>
+      {createToolboxButton(RESET_BUTTON, '', handleResetButtonClick(), pressedButton, setPressedButton)}
+      {createToolboxButton(ADD_BUTTON, '', handleAddButtonClick(), pressedButton, setPressedButton)}
     </div>
   );
 };
 
 const createToolboxButton = (buttonName: string, image: string, onClick: () => any, pressedButton: any, setPressedButton: any) => (
-  <div
+  <button
     onClick={() => {
       setPressedButton(pressedButton === buttonName ? '' : buttonName);
       onClick();
     }}
+    className={'button'}
     style={{
-      width: '3vw',
-      height: '3vw',
-      color: 'black',
-      marginLeft: 5,
-      marginRight: 5,
-      backgroundColor: '#add8e6',
-      borderRadius: 15,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontSize: 12,
-      userSelect: 'none',
       boxShadow: pressedButton && pressedButton === buttonName ? '' : '1px 3px 1px #9E9E9E',
     }}
   >
     {buttonName}
-  </div>
+  </button>
 );
 
 const handleDrawButtonClick = (previouslyActive: boolean) => () => {
-  console.log(`Button is now ${!previouslyActive ? 'active' : 'inactive'}`);
-
+  console.log(`Draw is now ${!previouslyActive ? 'active' : 'inactive'}`);
 
   if (!previouslyActive) {
-    // drawLine(playArea);
     setIsMapDraggable(false);
     enableDoodling();
   } else {

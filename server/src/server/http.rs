@@ -11,6 +11,7 @@ pub fn gather_routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::
     .or(create_session())
     .or(get_session())
     .or(get_user_sessions()) // figure out how to group these into .or(user_endpoints()).or(session_endpoints())
+    .or(update_user())
 }
 
 pub fn server() -> warp::Server<
