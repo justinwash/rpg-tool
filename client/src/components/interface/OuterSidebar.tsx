@@ -16,10 +16,6 @@ const OuterSidebar = (props: { width: number }) => {
         width: `${props.width}px`,
       }}
     >
-      <NavLink to='/link'>
-        <img style={navLinkStyles} src={navIconSrc} alt='Home' />
-      </NavLink>
-
       {auth.authState.googleUser && <img style={{ width: '80%' }} alt='user-icon' src={auth.authState.googleUser.getImageUrl()} />}
     </div>
   );
