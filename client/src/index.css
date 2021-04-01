@@ -7,9 +7,25 @@ body {
   display: flex;
   overflow: hidden;
   color: white;
-  background: '#222';
+  background-color: #222;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+button {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #add8e6;
+  user-select: none;
+  border: none;
+}
+
+button + button {
+  margin-left: 10px;
 }

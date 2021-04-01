@@ -30,8 +30,6 @@ viewport.drag().pinch().wheel().decelerate({
 
 app.stage.addChild(viewport);
 
-document.body.appendChild(app.view);
-
 createMap(playArea);
 createCharacterTokens(playArea);
 

@@ -6,6 +6,10 @@ pub fn create_user_request() -> impl Filter<Extract = (NewUser,), Error = warp::
   warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }
 
+pub fn update_user_request() -> impl Filter<Extract = (User,), Error = warp::Rejection> + Clone {
+  warp::body::content_length_limit(1024 * 16).and(warp::body::json())
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetUserSessionsRequest {
   pub user_id: f32,

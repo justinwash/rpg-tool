@@ -4,22 +4,30 @@ import { createBrowserHistory } from 'history';
 
 import AuthProvider from './contexts/AuthProvider';
 import PlayPage from './pages/PlayPage';
-import TestLink from './interface/TestLink';
-import LoginButton from './interface/LoginButton';
+import LandingPage from './pages/LandingPage';
+import NotFoundPage from './pages/NotFoundPage';
+import RegistrationPage from './pages/RegistrationPage';
 
 const history = createBrowserHistory();
 
 const App = () => {
   return (
     <AuthProvider>
-      <LoginButton />
       <Router history={history}>
         <Switch>
           <Route exact path='/'>
+            <LandingPage />
+          </Route>
+          <Route exact path='/play'>
+            {/* eventually /play/:session-id */}
             <PlayPage />
           </Route>
-          <Route exact path='/link'>
-            <TestLink />
+          <Route exact path='/registration'>
+            {/* eventually /play/:session-id */}
+            <RegistrationPage />
+          </Route>
+          <Route>
+            <NotFoundPage />
           </Route>
         </Switch>
       </Router>
