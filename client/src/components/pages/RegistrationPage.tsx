@@ -10,9 +10,10 @@ const RegistrationPage = (props: {}) => {
 
   const [username, setUsername] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const submitUsername = (username: string) => {
-    console.log(auth);
+    setLoading(true);
     if (username.length < 3) setError('username must be longer than 3 characters');
     else {
       http
@@ -26,9 +27,13 @@ const RegistrationPage = (props: {}) => {
               ...auth.authState,
               rpgToolUser: res.data,
             });
+            setLoading(false);
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
     }
   };
 
@@ -43,7 +48,8 @@ const RegistrationPage = (props: {}) => {
       <br />
       {error}
       <br />
-      <button onClick={() => submitUsername(username)}>Register</button>
+      {loading && <div id='spinner' />}
+      {!loading && <button onClick={() => submitUsername(username)}>Register</button>}
     </div>
   );
 };
