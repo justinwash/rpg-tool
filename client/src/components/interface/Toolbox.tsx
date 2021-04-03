@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { enableDoodling, resetTokens, disableDoodling } from '../pixi/map';
 import { playArea, setIsMapDraggable } from '../pixi/playArea';
 import { createCharacterTokens } from '../pixi/tokens';
