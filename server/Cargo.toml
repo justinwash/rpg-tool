@@ -20,6 +20,7 @@ dotenv = "0.15.0"
 diesel = { version = "1.4.4", features = ["postgres", "uuidv07", "serde_json"] }
 tokio = { version = "1", features = ["full"] }
 warp = "0.3"
+lazy_static = "1.4.0"
 # [dev-dependencies]
 # clap = "2.31.2"
 # term = "0.7.0"

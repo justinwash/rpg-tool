@@ -3,10 +3,19 @@ use crate::message::*;
 use diesel::pg::PgConnection;
 use ws::{listen, Handler, Handshake, Message, Result, Sender};
 
+use std::sync::Mutex;
+
+lazy_static! {
+  static ref CONNECTIONS: Mutex<Vec<ws::Sender>> = Mutex::new(Vec::new());
+}
+
 pub fn start() {
-  listen("127.0.0.1:9001", |out| WebsocketServer {
-    out,
-    db: get_db_connection(),
+  listen("127.0.0.1:9001", |out| -> WebsocketServer {
+    CONNECTIONS.lock().unwrap().push(out.clone());
+    WebsocketServer {
+      out,
+      db: get_db_connection(),
+    }
   })
   .unwrap();
 }
@@ -32,7 +41,12 @@ impl Handler for WebsocketServer {
 
       "group" => {
         let group_msg = serde_json::to_string(&generate_group_message(msg_data)).unwrap();
-        self.out.broadcast(group_msg)
+        println!(
+          "Connections in static CONNECTIONS: {}",
+          CONNECTIONS.lock().unwrap().len()
+        );
+        //self.out.broadcast(group_msg)
+        CONNECTIONS.lock().unwrap().get(0).unwrap().send(group_msg)
       }
 
       "roll" => {
