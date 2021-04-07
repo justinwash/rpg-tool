@@ -1,3 +1,10 @@
+@import url(//fonts.googleapis.com/css?family=Roboto);
+
+* {
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
@@ -15,19 +22,72 @@ code {
 }
 
 button {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 10px;
+  border: none;
+  padding: 8px 16px;
+  font-size: 12px;
   color: black;
-  font-weight: bold;
+  font-weight: 700;
   text-transform: uppercase;
   background-color: #add8e6;
   user-select: none;
-  border: none;
 }
 
-button + button {
-  margin-left: 10px;
+.toolbox__play {
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  flex-direction: column;
+  padding: 3px;
+  padding-left: 0;
+}
+.toolbox__play button {
+  text-align: left;
+  position: relative;
+  transition: background-color 0.15s ease-in-out;
+}
+.toolbox__play button:focus {
+  outline: 0;
+}
+.toolbox__play button + button {
+  margin-top: 3px;
+}
+.toolbox__play button:active,
+.toolbox__play button.__enabled {
+  background-color: darkturquoise;
+}
+/* .toolbox__play button:before {
+  display: block;
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(4px);
+  transform: scaleX(1);
+  transform-origin: left;
+  background-color: darkturquoise;
+  opacity: 0;
+  transition: all 0.15s ease-in-out;
+}
+.toolbox__play button:active:before,
+.toolbox__play button.__enabled:before {
+  opacity: 1;
+  transform: scaleX(0.1);
+} */
+.toolbox__play button span {
+  display: block;
+  transform: translateX(0);
+  transition: all 0.15s ease-in-out;
+}
+.toolbox__play button span:after {
+  display: block;
+  content: attr('data-prev');
+}
+.toolbox__play button.__enabled span {
+  transform: translateX(4px);
+}
+.toolbox__play button:first-child {
+  border-radius: 0 8px 0 0;
 }
 
 #spinner {
@@ -50,4 +110,8 @@ button + button {
   to {
     -webkit-transform: rotate(360deg);
   }
+}
+
+.toolbox__play button:last-child {
+  border-radius: 0 0 8px 0;
 }
