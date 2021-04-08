@@ -1,4 +1,5 @@
 use crate::message::*;
+use crate::models::session_from_json;
 use time::OffsetDateTime;
 
 pub fn generate_group_message(msg_data: Value) -> ClientMessage {
@@ -11,5 +12,10 @@ pub fn generate_group_message(msg_data: Value) -> ClientMessage {
     .to_string()
     .into(),
     message: msg_data["message"].to_string(),
+    session: if !msg_data["session"].is_null() {
+      Some(session_from_json(&msg_data["session"]))
+    } else {
+      None
+    },
   }
 }

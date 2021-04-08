@@ -1,3 +1,4 @@
+use crate::models::session_from_json;
 use cute_dnd_dice::*;
 use time::OffsetDateTime;
 
@@ -14,6 +15,11 @@ pub fn generate_roll_message(msg_data: Value) -> ClientMessage {
     .to_string()
     .into(),
     message: String::new(),
+    session: if !msg_data["session"].is_null() {
+      Some(session_from_json(&msg_data["session"]))
+    } else {
+      None
+    },
   };
 
   let roll = Roll::from_str(msg_data["message"].as_str().unwrap());

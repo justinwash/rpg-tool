@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import socket from '../../socket';
 import { cleanJsonString } from '../../utilities/json';
+import { AuthContext } from '../contexts/AuthProvider';
 
-const InnerSidebar = (props: { width: number }) => {
+const InnerSidebar = (props: { session: any; width: number }) => {
+  const auth = useContext(AuthContext);
   const [messages, setMessages] = useState<Record<string, any>[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
@@ -10,22 +12,25 @@ const InnerSidebar = (props: { width: number }) => {
     console.log('adding event listener for chat');
     socket.addEventListener('message', function (event) {
       let message = JSON.parse(event.data);
-      if (cleanJsonString(message.channel) !== 'group') return;
+      if (cleanJsonString(message.channel) !== 'group' || message.session?.uuid !== props.session?.uuid) return;
       setMessages((messages) => [...messages, JSON.parse(event.data)]);
     });
-  }, []);
+  }, [props.session]);
 
   const sendMessage = (message: string) => {
-    if (message === '') return;
+    if (message === '' || !auth.authState.rpgToolUser) return;
+    const user = auth.authState.rpgToolUser;
+
     if (message.startsWith('/roll ')) {
       message = message.replace('/roll ', '');
       socket.send(
         JSON.stringify({
           socket_id: 1234,
-          username: process.env.REACT_APP_USERNAME, // do this better
+          username: user.username,
           channel: 'roll',
           timestamp: Date.now(),
           message: message,
+          session: props.session,
         })
       );
     } else if (message.startsWith('/newmap ')) {
@@ -33,7 +38,7 @@ const InnerSidebar = (props: { width: number }) => {
       socket.send(
         JSON.stringify({
           socket_id: 1234,
-          username: process.env.REACT_APP_USERNAME, // do this better
+          username: user.username,
           channel: 'map',
           command: 'new',
           timestamp: Date.now(),
@@ -44,10 +49,11 @@ const InnerSidebar = (props: { width: number }) => {
       socket.send(
         JSON.stringify({
           socket_id: 1234,
-          username: process.env.REACT_APP_USERNAME, // do this better
+          username: user.username,
           channel: 'group',
           timestamp: Date.now(),
           message: message,
+          session: props.session,
         })
       );
     }

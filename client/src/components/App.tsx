@@ -19,11 +19,9 @@ const App = () => {
             <LandingPage />
           </Route>
           <Route exact path='/play'>
-            {/* eventually /play/:session-id */}
             <PlayPage />
           </Route>
           <Route exact path='/registration'>
-            {/* eventually /play/:session-id */}
             <RegistrationPage />
           </Route>
           <Route>

@@ -17,9 +17,10 @@ env_logger = "0.8.3"
 time = "0.2.25"
 cute-dnd-dice = "4.0.0"
 dotenv = "0.15.0"
-diesel = { version = "1.4.4", features = ["postgres", "uuidv07", "serde_json"] }
+diesel = { version = "1.4.4", features = ["postgres", "uuidv07", "serde_json", "numeric"] }
 tokio = { version = "1", features = ["full"] }
 warp = "0.3"
+lazy_static = "1.4.0"
 # [dev-dependencies]
 # clap = "2.31.2"
 # term = "0.7.0"
