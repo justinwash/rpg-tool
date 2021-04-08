@@ -1,6 +1,6 @@
 use crate::message::*;
+use crate::models::session_from_json;
 use time::OffsetDateTime;
-use uuid::*;
 
 pub fn generate_group_message(msg_data: Value) -> ClientMessage {
   ClientMessage {
@@ -13,8 +13,7 @@ pub fn generate_group_message(msg_data: Value) -> ClientMessage {
     .into(),
     message: msg_data["message"].to_string(),
     session: if !msg_data["session"].is_null() {
-      let session_id = Uuid::parse_str(&msg_data["session"].to_string()[1..37]);
-      Some(session_id.unwrap())
+      Some(session_from_json(&msg_data["session"]))
     } else {
       None
     },

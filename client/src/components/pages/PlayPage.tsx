@@ -56,10 +56,7 @@ const PlayPage = (props: {}) => {
 
   useEffect(() => {
     if (playArea && canvasRef.current) {
-      playArea.renderer.resize(
-        width - outerSidebarWidth - innerSidebarWidth,
-        height
-      );
+      playArea.renderer.resize(width - outerSidebarWidth - innerSidebarWidth, height);
     }
   }, [canvasRef, width, height]);
 
@@ -69,11 +66,7 @@ const PlayPage = (props: {}) => {
       <InnerSidebar session={session} width={innerSidebarWidth} />
       <Toolbox sidebarWidth={innerSidebarWidth + outerSidebarWidth} />
       <div style={{ overflow: 'auto' }} ref={canvasRef} />
-      {session && (
-        <span style={{ position: 'fixed', bottom: '8px', right: '8px' }}>
-          Session ID: {session.uuid}
-        </span>
-      )}
+      {session && <span style={{ position: 'fixed', bottom: '8px', right: '8px' }}>Session ID: {session.uuid}</span>}
     </div>
   );
 };

@@ -30,7 +30,7 @@ const InnerSidebar = (props: { session: any; width: number }) => {
           channel: 'roll',
           timestamp: Date.now(),
           message: message,
-          session: props.session?.uuid,
+          session: props.session,
         })
       );
     } else if (message.startsWith('/newmap ')) {
@@ -53,7 +53,7 @@ const InnerSidebar = (props: { session: any; width: number }) => {
           channel: 'group',
           timestamp: Date.now(),
           message: message,
-          session: props.session?.uuid,
+          session: props.session,
         })
       );
     }

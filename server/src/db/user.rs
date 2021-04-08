@@ -4,7 +4,6 @@ extern crate dotenv;
 use crate::models::Session;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-use uuid::Uuid;
 
 use crate::schema::user;
 use crate::schema::user::dsl::*;
@@ -42,18 +41,22 @@ pub fn get_users_in_session<'a>(
   session: Session,
 ) -> Result<Vec<User>, warp::Rejection> {
   let mut users: Vec<User> = Vec::new();
+  let mut user_ids = vec![session.dm];
 
   match session.players {
     Some(mut players) => {
-      players.push(session.dm);
-      match user.filter(id.eq_any(players)).load::<User>(db) {
-        Ok(mut u) => {
-          users.append(&mut u);
-        }
-        _ => {}
-      };
+      user_ids.append(&mut players);
     }
     _ => {}
   }
+
+  match user.filter(id.eq_any(user_ids)).load::<User>(db) {
+    Ok(mut u) => {
+      users.append(&mut u);
+    }
+    _ => {}
+  };
+
+  println!("{:?}", users);
   Ok(users)
 }
