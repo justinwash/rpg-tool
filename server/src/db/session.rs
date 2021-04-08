@@ -14,7 +14,7 @@ use ::uuid::Uuid;
 pub fn create_session<'a>(db: &PgConnection, user_id: i32) -> Result<Session, warp::Rejection> {
   let new_session = NewSession {
     uuid: Uuid::new_v4(),
-    dm: user_id as i64,
+    dm: user_id,
     players: None,
     state: None,
   };
@@ -33,7 +33,7 @@ pub fn get_user_sessions<'a>(
   db: &PgConnection,
   user_id: i32,
 ) -> Result<Vec<Session>, warp::Rejection> {
-  let res = session.filter(dm.eq(user_id as i64)).load(db);
+  let res = session.filter(dm.eq(user_id)).load(db);
 
   match res {
     Ok(i) => Ok(i),
