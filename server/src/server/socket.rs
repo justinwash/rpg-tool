@@ -13,8 +13,9 @@ lazy_static! {
 pub fn start() {
   listen("127.0.0.1:9001", |out| -> WebsocketServer {
     WebsocketServer {
-      out,
       db: get_db_connection(),
+      out,
+      user_id: None,
     }
   })
   .unwrap();
@@ -23,11 +24,22 @@ pub fn start() {
 struct WebsocketServer {
   db: PgConnection,
   out: Sender,
+  user_id: Option<i64>,
 }
 
 impl Handler for WebsocketServer {
   fn on_open(&mut self, _handshake: Handshake) -> Result<()> {
     Ok(())
+  }
+
+  fn on_close(&mut self, _close_code: ws::CloseCode, _reason: &str) {
+    match self.user_id {
+      Some(user_id) => match CONNECTIONS.lock().unwrap().get(&user_id) {
+        Some(connection) => println!("Connection closed: {:?}", connection),
+        _ => {}
+      },
+      _ => {}
+    }
   }
 
   fn on_message(&mut self, msg: Message) -> Result<()> {
@@ -40,6 +52,8 @@ impl Handler for WebsocketServer {
         // println!("{:?}", user_id);
 
         if user_id.is_some() {
+          self.user_id = user_id;
+
           CONNECTIONS
             .lock()
             .unwrap()
