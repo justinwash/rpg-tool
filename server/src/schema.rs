@@ -9,8 +9,8 @@ table! {
     session (id) {
         id -> Int4,
         uuid -> Uuid,
-        dm -> Int8,
-        players -> Nullable<Array<Int8>>,
+        dm -> Int4,
+        players -> Nullable<Array<Int4>>,
         state -> Nullable<Json>,
     }
 }
@@ -28,4 +28,8 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(image, session, user,);
+allow_tables_to_appear_in_same_query!(
+    image,
+    session,
+    user,
+);

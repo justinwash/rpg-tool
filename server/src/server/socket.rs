@@ -70,11 +70,6 @@ impl Handler for WebsocketServer {
 
       "group" => {
         let group_msg = serde_json::to_string(&generate_group_message(msg_data)).unwrap();
-        println!(
-          "Connections in static CONNECTIONS: {}",
-          CONNECTIONS.lock().unwrap().len()
-        );
-        //self.out.broadcast(group_msg)
 
         match CONNECTIONS.lock().unwrap().get(&1) {
           Some(client) => client.send(group_msg),

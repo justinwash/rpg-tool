@@ -1,0 +1,3 @@
+ALTER TABLE session 
+ALTER COLUMN dm TYPE int8,
+ALTER COLUMN players TYPE int8[];

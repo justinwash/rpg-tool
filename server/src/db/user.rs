@@ -1,8 +1,10 @@
 extern crate diesel;
 extern crate dotenv;
 
+use crate::models::Session;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+use uuid::Uuid;
 
 use crate::schema::user;
 use crate::schema::user::dsl::*;
@@ -33,4 +35,25 @@ pub fn update_user<'a>(db: &PgConnection, updated_user: &User) -> Result<User, w
     Ok(i) => Ok(i),
     _ => Err(warp::reject()),
   }
+}
+
+pub fn get_users_in_session<'a>(
+  db: &PgConnection,
+  session: Session,
+) -> Result<Vec<User>, warp::Rejection> {
+  let mut users: Vec<User> = Vec::new();
+
+  match session.players {
+    Some(mut players) => {
+      players.push(session.dm);
+      match user.filter(id.eq_any(players)).load::<User>(db) {
+        Ok(mut u) => {
+          users.append(&mut u);
+        }
+        _ => {}
+      };
+    }
+    _ => {}
+  }
+  Ok(users)
 }
