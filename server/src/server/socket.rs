@@ -37,7 +37,7 @@ impl Handler for WebsocketServer {
       Some(user_id) => match CONNECTIONS.lock().unwrap().get(&user_id) {
         Some(connection) => {
           println!("Connection closed: {:?}", connection);
-          CONNECTIONS.lock().unwrap().remove(&user_id);
+          // CONNECTIONS.lock().unwrap().remove(&user_id);
         }
         _ => {}
       },
@@ -58,8 +58,7 @@ impl Handler for WebsocketServer {
           CONNECTIONS
             .lock()
             .unwrap()
-            .entry(user_id.unwrap() as i32)
-            .or_insert(self.out.clone());
+            .insert(user_id.unwrap() as i32, self.out.clone());
         }
 
         Ok(())

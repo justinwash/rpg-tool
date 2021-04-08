@@ -12,10 +12,10 @@ const InnerSidebar = (props: { session: any; width: number }) => {
     console.log('adding event listener for chat');
     socket.addEventListener('message', function (event) {
       let message = JSON.parse(event.data);
-      if (cleanJsonString(message.channel) !== 'group') return;
+      if (cleanJsonString(message.channel) !== 'group' || message.session?.uuid !== props.session?.uuid) return;
       setMessages((messages) => [...messages, JSON.parse(event.data)]);
     });
-  }, []);
+  }, [props.session]);
 
   const sendMessage = (message: string) => {
     if (message === '' || !auth.authState.rpgToolUser) return;

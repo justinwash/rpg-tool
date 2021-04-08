@@ -44,7 +44,7 @@ const PlayPage = (props: {}) => {
       .catch((err) => {
         console.log(err);
       });
-  }, [session, setSession]);
+  }, []);
 
   useEffect(() => {
     canvasRef?.current?.appendChild(playArea.view);
