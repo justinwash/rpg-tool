@@ -1,17 +1,17 @@
 use crate::db::*;
 use crate::message::*;
 use diesel::pg::PgConnection;
+use std::collections::HashMap;
 use ws::{listen, Handler, Handshake, Message, Result, Sender};
 
 use std::sync::Mutex;
 
 lazy_static! {
-  static ref CONNECTIONS: Mutex<Vec<ws::Sender>> = Mutex::new(Vec::new());
+  static ref CONNECTIONS: Mutex<HashMap<i64, ws::Sender>> = Mutex::new(HashMap::new());
 }
 
 pub fn start() {
   listen("127.0.0.1:9001", |out| -> WebsocketServer {
-    CONNECTIONS.lock().unwrap().push(out.clone());
     WebsocketServer {
       out,
       db: get_db_connection(),
@@ -32,8 +32,23 @@ impl Handler for WebsocketServer {
 
   fn on_message(&mut self, msg: Message) -> Result<()> {
     let msg_data = parse_message(&msg);
+    println!("{:?}", CONNECTIONS.lock().unwrap());
 
     match msg_data["channel"].as_str().unwrap() {
+      "register" => {
+        let user_id = msg_data["user_id"].as_i64();
+        // println!("{:?}", user_id);
+
+        if user_id.is_some() {
+          CONNECTIONS
+            .lock()
+            .unwrap()
+            .insert(user_id.unwrap(), self.out.clone());
+        }
+
+        Ok(())
+      }
+
       "token" => {
         let token_msg = serde_json::to_string(&generate_token_message(msg_data)).unwrap();
         self.out.broadcast(token_msg)
@@ -46,7 +61,11 @@ impl Handler for WebsocketServer {
           CONNECTIONS.lock().unwrap().len()
         );
         //self.out.broadcast(group_msg)
-        CONNECTIONS.lock().unwrap().get(0).unwrap().send(group_msg)
+
+        match CONNECTIONS.lock().unwrap().get(&1) {
+          Some(client) => client.send(group_msg),
+          _ => Ok(()),
+        }
       }
 
       "roll" => {

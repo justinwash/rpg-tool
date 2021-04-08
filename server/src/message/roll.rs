@@ -1,5 +1,6 @@
 use cute_dnd_dice::*;
 use time::OffsetDateTime;
+use uuid::Uuid;
 
 use crate::message::*;
 
@@ -14,6 +15,12 @@ pub fn generate_roll_message(msg_data: Value) -> ClientMessage {
     .to_string()
     .into(),
     message: String::new(),
+    session: if !msg_data["session"].is_null() {
+      let session_id = Uuid::parse_str(&msg_data["session"].to_string()[1..37]);
+      Some(session_id.unwrap())
+    } else {
+      None
+    },
   };
 
   let roll = Roll::from_str(msg_data["message"].as_str().unwrap());

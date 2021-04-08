@@ -3,7 +3,7 @@ import socket from '../../socket';
 import { cleanJsonString } from '../../utilities/json';
 import { AuthContext } from '../contexts/AuthProvider';
 
-const InnerSidebar = (props: { width: number }) => {
+const InnerSidebar = (props: { session: any; width: number }) => {
   const auth = useContext(AuthContext);
   const [messages, setMessages] = useState<Record<string, any>[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -30,6 +30,7 @@ const InnerSidebar = (props: { width: number }) => {
           channel: 'roll',
           timestamp: Date.now(),
           message: message,
+          session: props.session?.uuid,
         })
       );
     } else if (message.startsWith('/newmap ')) {
@@ -52,6 +53,7 @@ const InnerSidebar = (props: { width: number }) => {
           channel: 'group',
           timestamp: Date.now(),
           message: message,
+          session: props.session?.uuid,
         })
       );
     }
