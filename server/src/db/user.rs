@@ -36,7 +36,7 @@ pub fn update_user<'a>(db: &PgConnection, updated_user: &User) -> Result<User, w
   }
 }
 
-pub fn get_users_in_session<'a>(
+pub fn _get_users_in_session<'a>(
   db: &PgConnection,
   session: Session,
 ) -> Result<Vec<User>, warp::Rejection> {
